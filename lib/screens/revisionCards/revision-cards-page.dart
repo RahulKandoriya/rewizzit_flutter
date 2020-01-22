@@ -72,7 +72,7 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
                       builder: (context, state) {
                         if (state is Failure) {
                           return Center(
-                            child: Text('failed to fetch posts'),
+                            child: Text('failed to fetch Data'),
                           );
                         }
                         if (state is Loaded) {
