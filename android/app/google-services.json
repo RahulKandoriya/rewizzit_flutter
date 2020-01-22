@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "845121378431",
+    "firebase_url": "https://rewizzit-c1c27.firebaseio.com",
+    "project_id": "rewizzit-c1c27",
+    "storage_bucket": "rewizzit-c1c27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845121378431:android:3dac059d13a63c29d1074a",
+        "android_client_info": {
+          "package_name": "com.rewizzit.rewizzit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845121378431-68m2t8202kdd9v4vg6esfjqgn45a82d6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rewizzit.rewizzit",
+            "certificate_hash": "e019d3e2b3dbc2191f09e5f18370c63a888bf3e6"
+          }
+        },
+        {
+          "client_id": "845121378431-ue0fakoe85t2bfcauk0bstg5shp3laar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5F1f8lLFVVjFsmm5gdzs0v47wBpeGmWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845121378431-ue0fakoe85t2bfcauk0bstg5shp3laar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
