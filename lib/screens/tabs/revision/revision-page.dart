@@ -77,7 +77,7 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                     [
                       GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository)));
+                          ///Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository)));
                         },
                         behavior: HitTestBehavior.translucent,
                         child: Container(
@@ -99,7 +99,7 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                               Center(
                                   child: Padding(
                                     padding: EdgeInsets.only(left: 20),
-                                    child: Text("Revise 97\nCards",
+                                    child: Text("How Revision\nWorks",
                                       style: GoogleFonts.josefinSans(
                                         textStyle: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
                                       ),
@@ -109,7 +109,7 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                               Spacer(),
                               Center(
                                 child: Icon(
-                                  Icons.collections_bookmark,
+                                  Icons.loop,
                                   size: 60,
                                   color: Colors.white,
                                 ),
@@ -149,7 +149,7 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                             Spacer(),
                             Center(
                               child: Icon(
-                                Icons.repeat,
+                                Icons.lightbulb_outline,
                                 size: 100,
                                 color: Colors.white,
                               ),

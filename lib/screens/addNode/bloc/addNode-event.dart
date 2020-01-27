@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AddNodeEvent extends Equatable {
   const AddNodeEvent();
@@ -8,29 +8,52 @@ abstract class AddNodeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Fetch extends AddNodeEvent {}
+class TitleChanged extends AddNodeEvent {
+  final String title;
 
-class Delete extends AddNodeEvent {
-  final String id;
-
-  const Delete({@required this.id});
+  const TitleChanged({@required this.title});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [title];
 
   @override
-  String toString() => 'Delete { id: $id }';
+  String toString() => 'TitleChanged { title :$title }';
 }
 
-class Deleted extends AddNodeEvent {
-  final String id;
+class Submitted extends AddNodeEvent {
+  final String title;
+  final bool isCardNode;
 
-  const Deleted({@required this.id});
+  const Submitted({
+    @required this.title,
+    @required this.isCardNode,
+  });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [title, isCardNode];
 
   @override
-  String toString() => 'Deleted { id: $id }';
+  String toString() {
+    return 'Submitted { title: $title, isCardNode: $isCardNode }';
+  }
 }
 
+class SubmitPressed extends AddNodeEvent {
+  final String title;
+  final bool isCardNode;
+  final String parentNodeId;
+
+  const SubmitPressed({
+    @required this.title,
+    @required this.isCardNode,
+    @required this.parentNodeId,
+  });
+
+  @override
+  List<Object> get props => [title, isCardNode, parentNodeId];
+
+  @override
+  String toString() {
+    return 'SubmitPressed { title: $title, isCardNode: $isCardNode, parentNodeId: $parentNodeId }';
+  }
+}

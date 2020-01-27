@@ -14,7 +14,7 @@ class AddNodeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<AddNodeBloc>(
-        create: (context) => AddNodeBloc(repository: _repository)..add(Fetch()),
+        create: (context) => AddNodeBloc(repository: _repository),
         child: AddNodePage(repository: _repository),
       ),
     );

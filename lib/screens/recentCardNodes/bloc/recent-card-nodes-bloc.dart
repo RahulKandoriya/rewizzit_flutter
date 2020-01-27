@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:rewizzit/data/services/repository.dart';
-import 'package:rewizzit/screens/recentNodes/bloc/bloc.dart';
+import './bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
 
-class RecentNodesBloc extends Bloc<RecentNodesEvent, RecentNodesState> {
+class RecentCardNodesBloc extends Bloc<RecentCardNodesEvent, RecentCardNodesState> {
   Repository _repository;
 
-  RecentNodesBloc({
+  RecentCardNodesBloc({
     @required Repository repository,
   })  : assert(repository != null),
         _repository = repository;
 
 
   @override
-  Stream<RecentNodesState> transformEvents(
-      Stream<RecentNodesEvent> events,
-      Stream<RecentNodesState> Function(RecentNodesEvent event) next,
+  Stream<RecentCardNodesState> transformEvents(
+      Stream<RecentCardNodesEvent> events,
+      Stream<RecentCardNodesState> Function(RecentCardNodesEvent event) next,
       ) {
     return super.transformEvents(
       events.debounceTime(
@@ -28,16 +28,16 @@ class RecentNodesBloc extends Bloc<RecentNodesEvent, RecentNodesState> {
   }
 
   @override
-  RecentNodesState get initialState => Loading();
+  RecentCardNodesState get initialState => Loading();
 
   @override
-  Stream<RecentNodesState> mapEventToState(
-      RecentNodesEvent event,
+  Stream<RecentCardNodesState> mapEventToState(
+      RecentCardNodesEvent event,
       ) async* {
     if (event is Fetch) {
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final cardNodes = await _repository.fetchCardNodesList();
+        yield Loaded(cardNodes: cardNodes);
       } catch (_) {
         yield Failure();
       }

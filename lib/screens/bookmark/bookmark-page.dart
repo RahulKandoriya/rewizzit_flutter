@@ -82,8 +82,8 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                           );
                         }
                         return PageView.builder(
-                          itemCount: 10,
-                          itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[0],),
+                          itemCount: state.bookmarkCards.length,
+                          itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[i],),
                           controller: controller,
 
                         );

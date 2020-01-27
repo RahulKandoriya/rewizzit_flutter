@@ -8,29 +8,16 @@ abstract class NodesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Fetch extends NodesEvent {}
+class Fetch extends NodesEvent {
 
-class Delete extends NodesEvent {
-  final String id;
+  final String parentNodeId;
 
-  const Delete({@required this.id});
-
-  @override
-  List<Object> get props => [id];
+  const Fetch({@required this.parentNodeId});
 
   @override
-  String toString() => 'Delete { id: $id }';
+  List<Object> get props => [parentNodeId];
+
+  @override
+  String toString() => 'Delete { id: $parentNodeId }';
+
 }
-
-class Deleted extends NodesEvent {
-  final String id;
-
-  const Deleted({@required this.id});
-
-  @override
-  List<Object> get props => [id];
-
-  @override
-  String toString() => 'Deleted { id: $id }';
-}
-

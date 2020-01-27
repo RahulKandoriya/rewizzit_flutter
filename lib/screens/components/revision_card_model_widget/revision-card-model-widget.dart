@@ -2,16 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rewizzit/data/models/models/card-model.dart';
+import 'package:rewizzit/data/models/api_response/api-response.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/editCard/editCard-screen.dart';
 import 'package:rewizzit/screens/nodeCards/node-cards-screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RevisionCardModelWidget extends StatefulWidget {
-  final CardModel cardModel;
+  final Revisions revisionCard;
 
 
-  const RevisionCardModelWidget({Key key, @required this.cardModel}) : super(key: key);
+  const RevisionCardModelWidget({Key key, @required this.revisionCard}) : super(key: key);
 
   @override
   _RevisionCardModelWidgetState createState() => _RevisionCardModelWidgetState();
@@ -56,7 +56,13 @@ class _RevisionCardModelWidgetState extends State<RevisionCardModelWidget> with 
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("The tiger (Panthera tigris) is the largest species among the Felidae and classified in the genus Panthera. It is most recognisable for its dark vertical stripes on orangish-brown fur with a lighter underside. It is an apex predator, primarily preying on ungulates such as deer and wild boar.",
+                Text( widget.revisionCard.card.title,
+                  style: GoogleFonts.josefinSans(
+                    textStyle: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Text( widget.revisionCard.card.content,
                   style: GoogleFonts.josefinSans(
                     textStyle: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.w400),
                   ),
@@ -65,11 +71,11 @@ class _RevisionCardModelWidgetState extends State<RevisionCardModelWidget> with 
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository)));
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.revisionCard.card.parentNode.sId,)));
                   },
                   child: Chip(
                     backgroundColor: Colors.green,
-                    label: Text('Tiger node',
+                    label: Text(widget.revisionCard.card.parentNode.title,
                       style: TextStyle(fontSize: 15.0, color: Colors.white),
                     ),
                   ),
@@ -79,33 +85,50 @@ class _RevisionCardModelWidgetState extends State<RevisionCardModelWidget> with 
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.loop,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.loop,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.edit,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditCardScreen(repository: _repository)));
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.bookmark,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.bookmark,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.share,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+
+                  },
                 ),
-                SizedBox(width: 20,),
 
               ],
             )

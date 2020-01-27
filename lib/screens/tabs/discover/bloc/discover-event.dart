@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 abstract class DiscoverEvent extends Equatable {
   const DiscoverEvent();
@@ -9,3 +8,7 @@ abstract class DiscoverEvent extends Equatable {
 }
 
 class Fetch extends DiscoverEvent {}
+class FetchBookmark extends DiscoverEvent {}
+class FetchTopNodes extends DiscoverEvent {}
+class FetchCardNodes extends DiscoverEvent {}
+class FetchRevisionCards extends DiscoverEvent {}

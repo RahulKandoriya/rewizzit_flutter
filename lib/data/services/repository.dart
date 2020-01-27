@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:rewizzit/data/models/api_response/add-node-response.dart';
 import 'package:rewizzit/data/models/api_response/api-response.dart';
 import 'package:rewizzit/data/models/models/models.dart';
 import 'package:rewizzit/data/models/models/user.dart';
@@ -48,23 +48,31 @@ class Repository {
     return await _apiProvider.fetchTopNodesList();
   }
 
-  Future<List<Node>> fetchSubNodesList() async {
-    prefs = await SharedPreferences.getInstance();
-    return await _apiProvider.fetchSubNodesList(prefs.getString("nodeId"));
+  Future<List<Node>> fetchSubNodesList(String parentNodeId) async {
+    return await _apiProvider.fetchSubNodesList(parentNodeId);
   }
 
-  Future<List<CardModel>> fetchNodeCardsList() async {
-    prefs = await SharedPreferences.getInstance();
-    return await _apiProvider.fetchNodeCardsList(prefs.getString("nodeId"));
+  Future<List<CardModel>> fetchNodeCardsList(String parentNodeId) async {
+    return await _apiProvider.fetchNodeCardsList(parentNodeId);
   }
 
-  Future<bool> addNode(String title, bool isCardNode) async {
-    prefs = await SharedPreferences.getInstance();
-    return await _apiProvider.addNode(title, isCardNode, prefs.getString("parentOfNodeId"));
+  Future<List<CardsNodesData>> fetchCardNodesList() async {
+    return await _apiProvider.fetchCardNodesList();
   }
 
-  Future<bool> addCard(String title, String content, File image) async {
-    prefs = await SharedPreferences.getInstance();
-    return await _apiProvider.addCard(title, content, prefs.getString("cardParentNode"),image);
+  Future<String> addCardToBookmark(String cardId) async {
+    return await _apiProvider.addCardToBookmark(cardId);
+  }
+
+  Future<String> addCardToRevision(String cardId) async {
+    return await _apiProvider.addCardToRevision(cardId);
+  }
+
+  Future<void> addNode(String title, bool isCardNode, String parentNode) async {
+    return await _apiProvider.addNode(title, isCardNode,parentNode);
+  }
+
+  Future<void> addCard(String title, String content, String parentNodeId) async {
+    return await _apiProvider.addCard(title, content, parentNodeId);
   }
 }

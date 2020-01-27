@@ -12,15 +12,15 @@ abstract class NodeCardsState extends Equatable {
 class Loading extends NodeCardsState {}
 
 class Loaded extends NodeCardsState {
-  final List<CardModel> bookmarkCards;
+  final List<CardModel> nodeCards;
 
-  const Loaded({@required this.bookmarkCards});
-
-  @override
-  List<Object> get props => [bookmarkCards];
+  const Loaded({@required this.nodeCards});
 
   @override
-  String toString() => 'Loaded { items: ${bookmarkCards.length} }';
+  List<Object> get props => [nodeCards];
+
+  @override
+  String toString() => 'Loaded { items: ${nodeCards.length} }';
 }
 
 class Failure extends NodeCardsState {}

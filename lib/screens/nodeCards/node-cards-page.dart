@@ -13,8 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class NodeCardsPage extends StatefulWidget {
 
   final Repository _repository;
+  final String parentNodeId;
 
-  NodeCardsPage({Key key, @required Repository repository})
+  NodeCardsPage({Key key, @required Repository repository, @required this.parentNodeId})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -36,6 +37,12 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+    controller.addListener(() {
+      setState(() {
+        currentPageValue = controller.page;
+      });
+    });
+
   }
 
 
@@ -61,12 +68,37 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                           textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      Text("Node Title",
+                      Text('',
                         style: GoogleFonts.josefinSans(
                           textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
                         ),
                       ),
+                      SizedBox(height: 10,),
+                      BlocBuilder<NodeCardsBloc, NodeCardsState>(
+                          builder: (context, state){
+                            if (state is Failure) {
+                              return Center(
+                                child: Text('failed to fetch data'),
+                              );
+                            }
+                            if (state is Loaded) {
+                              if (state.nodeCards.isEmpty) {
+                                return Center(
+                                  child: Text('no data'),
+                                );
+                              }
+                              return Text('${state.nodeCards[0].parentNode.title}',
+                                style: GoogleFonts.josefinSans(
+                                  textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                                ),
+                              );
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+
+                      )
                     ],
                   ),
                   Container(
@@ -80,14 +112,14 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                           );
                         }
                         if (state is Loaded) {
-                          if (state.bookmarkCards.isEmpty) {
+                          if (state.nodeCards.isEmpty) {
                             return Center(
                               child: Text('no posts'),
                             );
                           }
                           return PageView.builder(
-                            itemCount: 10,
-                            itemBuilder: (context, i) => NodeCardModelWidget(cardModel: state.bookmarkCards[0],),
+                            itemCount: state.nodeCards.length,
+                            itemBuilder: (context, i) => NodeCardModelWidget(cardModel: state.nodeCards[i],),
                             controller: controller,
                           );
                         }
@@ -100,27 +132,54 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 40, right: 40,),
-                        child: FlutterSlider(
-                          values: [0],
-                          max: 10,
-                          min: 0,
-                          onDragging: (handlerIndex, lowerValue, upperValue) {
-                            _lowerValue = lowerValue;
-                            _upperValue = upperValue;
-                            setState(() {
-                              print(handlerIndex);
-                              print(lowerValue);
-                              controller.animateToPage(_lowerValue.floor(), duration: Duration(milliseconds: 300), curve: Curves.linear);
+                      Visibility(
+                        visible: false,
+                        child: BlocBuilder<NodeCardsBloc, NodeCardsState>(
+                          builder: (context, state) {
+                            if (state is Failure) {
+                              return Center(
+                                child: Text('failed to fetch posts'),
+                              );
+                            }
+                            if (state is Loaded) {
+                              if (state.nodeCards.isEmpty) {
+                                return Center(
+                                  child: Text('no posts'),
+                                );
+                              }
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text("Select Card (${_lowerValue.floor()}/${state.nodeCards.length})",
+                                    style: GoogleFonts.josefinSans(
+                                      textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 40, right: 40,),
+                                    child: Slider(
+                                      activeColor: Colors.indigoAccent,
+                                      min: 1.0,
+                                      max: state.nodeCards.length.toDouble(),
+                                      onChanged: (currentValue) {
+                                        setState(() {
 
-                            });
+                                          print(currentValue);
+                                          currentPageValue = currentValue;
+                                          controller.animateToPage(currentValue.floor(), duration: Duration(milliseconds: 300), curve: Curves.linear);
+
+                                        });
+                                      },
+                                      value: 1.0,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
                           },
-                        ),
-                      ),
-                      Text("Select Card (${_lowerValue.floor()}/10)",
-                        style: GoogleFonts.josefinSans(
-                          textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
                         ),
                       ),
                       SizedBox(height: 15,),

@@ -10,11 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class RevisionCardsPage extends StatefulWidget {
 
-  final Repository _repository;
-
-  RevisionCardsPage({Key key, @required Repository repository})
-      : assert(repository != null),
-        _repository = repository, super(key: key);
+  final Repository repository;
+  final int cardPosition;
+  RevisionCardsPage({Key key, @required  this.repository, @required this.cardPosition})
+      : super(key: key);
 
 
   @override
@@ -24,13 +23,19 @@ class RevisionCardsPage extends StatefulWidget {
 class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTickerProviderStateMixin {
 
 
-  PageController controller = PageController(viewportFraction: .8);
+  PageController controller = PageController(viewportFraction: .8, keepPage: true);
   var currentPageValue = 0.0;
   bool isAppBarUp;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+
+      ///controller.jumpToPage(widget.cardPosition);
+
+    });
+
   }
 
   SharedPreferences prefs;
@@ -39,6 +44,7 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+
 
     return SafeArea(
       child: Stack(
@@ -76,15 +82,15 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
                           );
                         }
                         if (state is Loaded) {
-                          if (state.bookmarkCards.isEmpty) {
+                          if (state.revisionCards.isEmpty) {
                             return Center(
-                              child: Text('no posts'),
+                              child: Text('No Cards'),
                             );
                           }
                           return PageView.builder(
-                            itemCount: 10,
-                            itemBuilder: (context, i) => RevisionCardModelWidget(cardModel: state.bookmarkCards[0],),
-                            controller: PageController(viewportFraction: .8),
+                            itemCount: state.revisionCards.length,
+                            itemBuilder: (context, i) => RevisionCardModelWidget(revisionCard: state.revisionCards[i],),
+                            controller: controller,
                           );
                         }
                         return Center(

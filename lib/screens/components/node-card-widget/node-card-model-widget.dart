@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/models/models/card-model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/editCard/editCard-screen.dart';
 
 class NodeCardModelWidget extends StatefulWidget {
   final CardModel cardModel;
@@ -18,6 +19,7 @@ class NodeCardModelWidget extends StatefulWidget {
 class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTickerProviderStateMixin{
 
 
+  Repository _repository = Repository();
 
   @override
   void initState() {
@@ -48,12 +50,19 @@ class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTi
         margin: EdgeInsets.all(25),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("The tiger (Panthera tigris) is the largest species among the Felidae and classified in the genus Panthera. It is most recognisable for its dark vertical stripes on orangish-brown fur with a lighter underside. It is an apex predator, primarily preying on ungulates such as deer and wild boar.",
+                Text(widget.cardModel.title,
+                  style: GoogleFonts.josefinSans(
+                    textStyle: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Text(widget.cardModel.content,
                   style: GoogleFonts.josefinSans(
                     textStyle: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.w400),
                   ),
@@ -64,33 +73,50 @@ class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTi
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.loop,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.loop,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.edit,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditCardScreen(repository: _repository)));
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.bookmark,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.bookmark,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+                  },
                 ),
-                SizedBox(width: 20,),
-                Icon(
-                  Icons.share,
-                  size: 25,
-                  color: Colors.grey,
+                IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    size: 25,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+
+
+                  },
                 ),
-                SizedBox(width: 20,),
 
               ],
             )

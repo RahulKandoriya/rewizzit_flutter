@@ -1,16 +1,16 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class RecentNodesEvent extends Equatable {
-  const RecentNodesEvent();
+abstract class AddCollectionEvent extends Equatable {
+  const AddCollectionEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class Fetch extends RecentNodesEvent {}
+class Fetch extends AddCollectionEvent {}
 
-class Delete extends RecentNodesEvent {
+class Delete extends AddCollectionEvent {
   final String id;
 
   const Delete({@required this.id});
@@ -22,7 +22,7 @@ class Delete extends RecentNodesEvent {
   String toString() => 'Delete { id: $id }';
 }
 
-class Deleted extends RecentNodesEvent {
+class Deleted extends AddCollectionEvent {
   final String id;
 
   const Deleted({@required this.id});

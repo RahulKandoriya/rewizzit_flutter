@@ -2,16 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:rewizzit/data/models/models/card-model.dart';
 
-abstract class RecentNodesState extends Equatable {
-  const RecentNodesState();
+abstract class AddCollectionState extends Equatable {
+  const AddCollectionState();
 
   @override
   List<Object> get props => [];
 }
 
-class Loading extends RecentNodesState {}
+class Loading extends AddCollectionState {}
 
-class Loaded extends RecentNodesState {
+class Loaded extends AddCollectionState {
   final List<CardModel> bookmarkCards;
 
   const Loaded({@required this.bookmarkCards});
@@ -23,4 +23,4 @@ class Loaded extends RecentNodesState {
   String toString() => 'Loaded { items: ${bookmarkCards.length} }';
 }
 
-class Failure extends RecentNodesState {}
+class Failure extends AddCollectionState {}

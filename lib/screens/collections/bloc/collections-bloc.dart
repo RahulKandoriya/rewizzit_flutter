@@ -36,8 +36,8 @@ class CollectionsBloc extends Bloc<CollectionsEvent, CollectionsState> {
       ) async* {
     if (event is Fetch) {
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final topNodes = await _repository.fetchTopNodesList();
+        yield Loaded(topNodes: topNodes);
       } catch (_) {
         yield Failure();
       }

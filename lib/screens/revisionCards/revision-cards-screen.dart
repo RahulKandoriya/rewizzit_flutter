@@ -6,17 +6,18 @@ import 'package:rewizzit/screens/revisionCards/revision-cards-page.dart';
 
 class RevisionCardsScreen extends StatelessWidget {
 
-  final Repository _repository = Repository();
+  final Repository repository;
+  final int cardPosition;
 
-  RevisionCardsScreen({Key key, @required Repository repository})
+  RevisionCardsScreen({Key key, @required this.repository, @required this.cardPosition})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<RevisionCardsBloc>(
-        create: (context) => RevisionCardsBloc(repository: _repository)..add(Fetch()),
-        child: RevisionCardsPage(repository: _repository),
+        create: (context) => RevisionCardsBloc(repository: repository)..add(Fetch()),
+        child: RevisionCardsPage(repository: repository, cardPosition: cardPosition,),
       ),
     );
   }

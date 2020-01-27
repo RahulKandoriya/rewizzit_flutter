@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_image/network.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/models/models/user.dart';
 import 'package:rewizzit/data/services/repository.dart';
@@ -112,7 +113,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                                     shape: BoxShape.circle,
                                     image: new DecorationImage(
                                         fit: BoxFit.fill,
-                                        image: new NetworkImage(User.fromJson(json.decode(preference.getString("user"))).uPicture)
+                                        image: new NetworkImageWithRetry(User.fromJson(json.decode(preference.getString("user"))).uPicture)
                                     )
                                 )),
                             SizedBox(height: 50),
@@ -162,7 +163,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                           Spacer(),
                           Center(
                             child: Icon(
-                              Icons.lightbulb_outline,
+                              Icons.done_outline,
                               size: 80,
                               color: Colors.white,
                             ),

@@ -78,12 +78,6 @@ class _AddNodeModelWidgetState extends State<AddNodeModelWidget> with SingleTick
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Is Card Node",
-                    style: GoogleFonts.josefinSans(
-                      textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                  Spacer(),
                   Checkbox(
                     value: switchOn,
                     onChanged: (bool value) {
@@ -92,8 +86,12 @@ class _AddNodeModelWidgetState extends State<AddNodeModelWidget> with SingleTick
                       });
                     },
                   ),
-
-
+                  SizedBox(width: 10,),
+                  Text("Is Card Node",
+                    style: GoogleFonts.josefinSans(
+                      textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
+                    ),
+                  ),
                 ],
               )
             ],

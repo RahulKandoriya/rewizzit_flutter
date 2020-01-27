@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/addCollection/addCollection-screen.dart';
+import 'package:rewizzit/screens/collections/bloc/bloc.dart';
 import 'package:rewizzit/screens/nodesPage/nodes-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,582 +52,89 @@ class _CollectionsPageState extends State<CollectionsPage> with SingleTickerProv
               ),
             ),
             body: Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: (){
+              margin: EdgeInsets.only(left: 10, right: 10, bottom: 100),
+              child: BlocBuilder<CollectionsBloc, CollectionsState>(
+                builder: (context, state){
+                  if (state is Failure) {
+                    return Center(
+                      child: Text('failed to fetch data'),
+                    );
+                  }
+                  if (state is Loaded) {
+                    if (state.topNodes.isEmpty) {
+                      return Center(
+                        child: Text('no data'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: state.topNodes.length,
+                      itemBuilder: (context, index){
+                        return GestureDetector(
+                          onTap: (){
 
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
+                            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: state.topNodes[index].sId,)));
+                          },
+                          behavior: HitTestBehavior.translucent,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10,),
+                            height: 150,
+                            width: double.infinity,
+                            decoration: new BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey[350],
+                                  blurRadius: 8.0, // has the effect of softening the shadow
+                                  spreadRadius: 3.0, // has the effect of extending the shadow
+                                  offset: Offset(
+                                    3.0, // horizontal, move right 10
+                                    3.0, // vertical, move down 10
+                                  ),
+                                )
+                              ],
+                              gradient: new LinearGradient(
+                                  colors: [Colors.red, Colors.pink],
+                                  begin: Alignment.topRight,
+                                  end: Alignment.topLeft
+                              ),
+                              borderRadius: new BorderRadius.circular(10.0),
                             ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Expanded(
+                                  child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                        child: Text('${state.topNodes[index].title}',
+                                          style: GoogleFonts.josefinSans(
+                                            textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                                          ),
+                                        ),
+                                      )
                                   ),
                                 ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                                SizedBox(width: 15,),
+                                Center(
+                                  child: Icon(
+                                    Icons.collections_bookmark,
+                                    size: 50,
+                                    color: Colors.white,
                                   ),
                                 ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
+                                SizedBox(width: 30),
+                              ],
+
                             ),
                           ),
-                          SizedBox(width: 30),
-                        ],
+                        );
+                      });
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
 
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository)));
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 10,),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: new BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[350],
-                            blurRadius: 8.0, // has the effect of softening the shadow
-                            spreadRadius: 3.0, // has the effect of extending the shadow
-                            offset: Offset(
-                              3.0, // horizontal, move right 10
-                              3.0, // vertical, move down 10
-                            ),
-                          )
-                        ],
-                        gradient: new LinearGradient(
-                            colors: [Colors.greenAccent, Colors.green],
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft
-                        ),
-                        borderRadius: new BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text("Top Node",
-                                  style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Spacer(),
-                          Center(
-                            child: Icon(
-                              Icons.category,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                        ],
-
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 150,)
-                ],
               )
 
             ),
@@ -636,6 +146,8 @@ class _CollectionsPageState extends State<CollectionsPage> with SingleTickerProv
               child: RaisedButton(
                 color: Colors.deepPurple,
                 onPressed: () {
+
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddCollectionScreen(repository: _repository)));
 
                 },
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),

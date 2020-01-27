@@ -36,8 +36,8 @@ class RevisionCardsBloc extends Bloc<RevisionCardsEvent, RevisionCardsState> {
       ) async* {
     if (event is Fetch) {
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final revisionCards = await _repository.fetchRevisionCards();
+        yield Loaded(revisionCards: revisionCards);
       } catch (_) {
         yield Failure();
       }

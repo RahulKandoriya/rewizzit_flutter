@@ -11,12 +11,6 @@ class ApiBaseHelper {
   final String _baseUrl = "https://rewizzit.api.cofeelia.com/";
   SharedPreferences prefs;
 
-  Map<String, String> requestHeaders = {
-    'Content-type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': '<Your token>'
-  };
-
   Future<Map<String, String>> fetchAuthToken() async {
     prefs = await SharedPreferences.getInstance();
 
@@ -25,7 +19,6 @@ class ApiBaseHelper {
       'Accept': 'application/json',
       'Authorization': User.fromJson(json.decode(prefs.getString("user"))).authorizeToken
     };
-    ///return User.fromJson(json.decode(prefs.getString("user"))).authorizeToken;
   }
 
   Future<dynamic> get(String url) async {
@@ -43,16 +36,19 @@ class ApiBaseHelper {
   }
 
   Future<dynamic> post(String url, dynamic body) async {
-    print('Api Post, url $url');
+    print('Api Post, url $url body $body');
     var responseJson;
     try {
-      final response = await http.post(_baseUrl + url,headers: await fetchAuthToken(), body: body);
+
+      final response = await http.post(_baseUrl + url ,headers: await fetchAuthToken(), body: json.encode(body));
       responseJson = _returnResponse(response);
+
+
     } on SocketException {
       print('No net');
       throw FetchDataException('No Internet connection');
     }
-    print('api post.');
+    print('api get recieved!');
     return responseJson;
   }
 }

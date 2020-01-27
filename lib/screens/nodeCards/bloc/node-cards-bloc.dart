@@ -7,9 +7,11 @@ import 'package:bloc/bloc.dart';
 
 class NodeCardsBloc extends Bloc<NodeCardsEvent, NodeCardsState> {
   Repository _repository;
+  String parentNodeId;
 
   NodeCardsBloc({
     @required Repository repository,
+    @required this.parentNodeId
   })  : assert(repository != null),
         _repository = repository;
 
@@ -36,8 +38,8 @@ class NodeCardsBloc extends Bloc<NodeCardsEvent, NodeCardsState> {
       ) async* {
     if (event is Fetch) {
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final nodeCards = await _repository.fetchNodeCardsList(parentNodeId);
+        yield Loaded(nodeCards: nodeCards);
       } catch (_) {
         yield Failure();
       }

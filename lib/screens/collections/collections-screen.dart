@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rewizzit/data/services/repository.dart';
 import 'package:rewizzit/screens/collections/collections.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CollectionsScreen extends StatelessWidget {
 

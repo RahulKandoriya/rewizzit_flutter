@@ -35,9 +35,10 @@ class NodesBloc extends Bloc<NodesEvent, NodesState> {
       NodesEvent event,
       ) async* {
     if (event is Fetch) {
+      yield Loading();
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final nodes = await _repository.fetchSubNodesList(event.parentNodeId);
+        yield Loaded(nodes: nodes);
       } catch (_) {
         yield Failure();
       }
