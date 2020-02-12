@@ -1,13 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quill_delta/quill_delta.dart';
 import 'package:rewizzit/data/services/repository.dart';
 import 'package:rewizzit/screens/addCard/addCard.dart';
 import 'package:rewizzit/screens/selectNodePage/select-node-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zefyr/zefyr.dart';
 
 class AddCardPage extends StatefulWidget {
 
@@ -36,8 +36,10 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
 
   var parentNodeTitle = 'Add Node';
 
+
+
   bool get isPopulated =>
-      _titleController.text.isNotEmpty && _contentController.text.isNotEmpty;
+      _titleController.text.isNotEmpty;
 
   bool isSubmitButtonEnabled(AddCardState state) {
     return state.isFormValid && isPopulated && !state.isSubmitting && parentNodeTitle != "Add Node";
@@ -60,7 +62,7 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
 
     return SafeArea(
         child: Container(
-          height: double.infinity,
+          height: MediaQuery.of(context).size.height,
           child: ListView(
             scrollDirection: Axis.vertical,
             children: <Widget>[
@@ -119,7 +121,7 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
                                 );
                             }
                             if (state.isSuccess) {
-
+                              Navigator.pop(context);
                             }
                           },
                           child: BlocBuilder<AddCardBloc, AddCardState>(
@@ -129,96 +131,91 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
                                 children: <Widget>[
                                   Container(
                                     height: 420,
-                                    width: double.infinity,
-                                    child:  Container(
-                                        margin: EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
-                                        decoration: new BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey[350],
-                                              blurRadius: 2.0, // has the effect of softening the shadow
-                                              spreadRadius: 0.5, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                5.0, // horizontal, move right 10
-                                                5.0, // vertical, move down 10
-                                              ),
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          borderRadius: new BorderRadius.circular(15.0),
-                                        ),
-                                        child: Container(
-                                          margin: EdgeInsets.only(left: 25, top: 10, right: 25),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              Container(
-                                                width: 300,
-                                                child: TextFormField(
-                                                  controller: _titleController,
-                                                  maxLength: 20,
-                                                  style: GoogleFonts.josefinSans(
-                                                    textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintText: "Enter Title",
-                                                    hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
-
-                                                  ),
-                                                  validator: (_) {
-                                                    return !state.isTitleValid ? 'Invalid Title' : null;
-                                                  },
-
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 300,
-                                                child: TextFormField(
-                                                  controller: _contentController,
-                                                  maxLength: 300,
-                                                  minLines: 9,
-                                                  maxLines: 10,
-                                                  style: GoogleFonts.josefinSans(
-                                                    textStyle: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.normal),
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintText: "Enter Details",
-                                                    hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
-
-
-                                                  ),
-
-                                                  validator: (_) {
-                                                    return !state.isContentValid ? 'Invalid Content' : null;
-                                                  },
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  SizedBox(width: 20,),
-                                                  GestureDetector(
-                                                    behavior: HitTestBehavior.translucent,
-                                                    onTap: (){
-                                                      _navigateAndSelectNode(context);
-                                                    },
-                                                    child: Chip(
-                                                      backgroundColor: Colors.green,
-                                                      label: Text(parentNodeTitle,
-                                                        style: TextStyle(fontSize: 15.0, color: Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 20,),
-
-                                                ],
-                                              )
-                                            ],
+                                    width: 300,
+                                    padding: EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
+                                    margin: EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
+                                    decoration: new BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[350],
+                                          blurRadius: 2.0, // has the effect of softening the shadow
+                                          spreadRadius: 0.5, // has the effect of extending the shadow
+                                          offset: Offset(
+                                            5.0, // horizontal, move right 10
+                                            5.0, // vertical, move down 10
                                           ),
                                         )
+                                      ],
+                                      color: Colors.white,
+                                      borderRadius: new BorderRadius.circular(15.0),
+                                    ),
+                                    child:  Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          width: 300,
+                                          child: TextFormField(
+                                            controller: _titleController,
+                                            maxLines: 2,
+                                            style: GoogleFonts.amaranth(
+                                              textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                                            ),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Enter Title",
+                                              hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
+
+                                            ),
+                                            validator: (_) {
+                                              return !state.isTitleValid ? 'Invalid Title' : null;
+                                            },
+
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 300,
+                                          child: TextFormField(
+                                            controller: _contentController,
+                                            minLines: 8,
+                                            maxLines: 10,
+                                            style: GoogleFonts.amaranth(
+                                              textStyle: TextStyle(fontSize: 20, color: Colors.black54, fontWeight: FontWeight.normal),
+                                            ),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Enter Details",
+                                              hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
+
+
+                                            ),
+
+                                            validator: (_) {
+                                              return !state.isContentValid ? 'Invalid Content' : null;
+                                            },
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            SizedBox(width: 20,),
+                                            GestureDetector(
+                                              behavior: HitTestBehavior.translucent,
+                                              onTap: (){
+                                                _navigateAndSelectNode(context);
+                                              },
+                                              child: Chip(
+                                                backgroundColor: Colors.green,
+                                                label: Text(parentNodeTitle,
+                                                  style: TextStyle(fontSize: 15.0, color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 20,),
+
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
                                   SizedBox(height: 50,),
@@ -269,25 +266,26 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.pop(context);
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Padding(
+                  Padding(
                       padding: EdgeInsets.only(left: 20, top: 30),
-                      child: Icon(
-                          Icons.close
-                      ),
-                    ),
-                  )
+                      child: IconButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                            Icons.close
+                        ),
+                      )
+                  ),
                 ],
               ),
             ],
           ),
-        )
+        ),
     );
   }
+
+
 
   _navigateAndSelectNode(BuildContext context) async {
 
@@ -295,6 +293,7 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
     parentNodeTitle = parentNodeTitle == null ? "Add Node" : parentNodeTitle;
 
   }
+
 
   @override
   void dispose() {

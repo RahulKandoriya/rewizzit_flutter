@@ -9,7 +9,7 @@ class RevisionScreen extends StatelessWidget {
   final Repository repository = Repository();
   final SharedPreferences preferences;
 
-  RevisionScreen({Key key,@required this.preferences})
+  RevisionScreen({Key key,@required this.preferences,})
       : super(key: key);
 
   @override

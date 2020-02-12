@@ -34,12 +34,22 @@ class SelectNodeBloc extends Bloc<SelectNodeEvent, SelectNodeState> {
   Stream<SelectNodeState> mapEventToState(
       SelectNodeEvent event,
       ) async* {
-    if (event is Fetch) {
+    if (event is FetchSubNodes) {
       yield NodesLoading();
       try {
-        final nodes = await _repository.fetchSubNodesList(event.parentNodeId);
+        final subNodesResponse = await _repository.fetchSubNodesList(event.parentNodeId);
         final cardNodes = await _repository.fetchCardNodesList();
-        yield Loaded(nodes: nodes, cardNodes: cardNodes);
+        yield Loaded(subNodesResponse: subNodesResponse, cardNodes: cardNodes);
+      } catch (_) {
+        yield Failure();
+      }
+    }
+
+    if (event is FetchCardNodes) {
+      yield Loading();
+      try {
+        final cardNodes = await _repository.fetchCardNodesList();
+        yield CardNodesLoaded(cardNodes: cardNodes);
       } catch (_) {
         yield Failure();
       }

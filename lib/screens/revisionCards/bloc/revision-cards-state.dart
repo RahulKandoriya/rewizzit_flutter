@@ -24,3 +24,6 @@ class Loaded extends RevisionCardsState {
 }
 
 class Failure extends RevisionCardsState {}
+
+
+

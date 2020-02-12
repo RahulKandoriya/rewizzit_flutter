@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:rewizzit/data/models/api_response/add-node-response.dart';
 import 'package:rewizzit/data/models/api_response/api-response.dart';
+import 'package:rewizzit/data/models/api_response/explore-data-response.dart';
+import 'package:rewizzit/data/models/api_response/revision-controls-get-response.dart';
+import 'package:rewizzit/data/models/api_response/revision-controls-post-response.dart';
 import 'package:rewizzit/data/models/models/models.dart';
 import 'package:rewizzit/data/models/models/user.dart';
 import 'package:rewizzit/data/services/api-provider.dart';
@@ -40,19 +42,27 @@ class Repository {
     return await _apiProvider.fetchRevisionCardsList();
   }
 
+  Future<ExploreData> fetchExploreDataList() async {
+    return await _apiProvider.fetchExploreDataList();
+  }
+
   Future<List<CardModel>> fetchBookmarkCards() async {
     return await _apiProvider.fetchBookmarkCardsList();
   }
 
-  Future<List<TopNode>> fetchTopNodesList() async {
+  Future<List<RecentCards>> fetchRecentCards() async {
+    return await _apiProvider.fetchRecentCardsList();
+  }
+
+  Future<SubNodesResponse> fetchTopNodesList() async {
     return await _apiProvider.fetchTopNodesList();
   }
 
-  Future<List<Node>> fetchSubNodesList(String parentNodeId) async {
+  Future<SubNodesResponse> fetchSubNodesList(String parentNodeId) async {
     return await _apiProvider.fetchSubNodesList(parentNodeId);
   }
 
-  Future<List<CardModel>> fetchNodeCardsList(String parentNodeId) async {
+  Future<NodeCardsResponse> fetchNodeCardsList(String parentNodeId) async {
     return await _apiProvider.fetchNodeCardsList(parentNodeId);
   }
 
@@ -68,11 +78,39 @@ class Repository {
     return await _apiProvider.addCardToRevision(cardId);
   }
 
+  Future<String> updateCardToRevision(String revi_id) async {
+    return await _apiProvider.updateCardToRevision(revi_id);
+  }
+
+  Future<String> deleteCard(String cardId) async {
+    return await _apiProvider.deleteCard(cardId);
+  }
+
+  Future<String> deleteNode(String nodeId) async {
+    return await _apiProvider.deleteNode(nodeId);
+  }
+
   Future<void> addNode(String title, bool isCardNode, String parentNode) async {
     return await _apiProvider.addNode(title, isCardNode,parentNode);
   }
 
+  Future<void> editNode(String title, String nodeId) async {
+    return await _apiProvider.editNode(title, nodeId);
+  }
+
   Future<void> addCard(String title, String content, String parentNodeId) async {
     return await _apiProvider.addCard(title, content, parentNodeId);
+  }
+
+  Future<void> editCard(String title, String content, String parentNodeId, String cardId) async {
+    return await _apiProvider.editCard(title, content, parentNodeId, cardId);
+  }
+
+  Future<RevisionControlsPostResponse> setRevisionControls(int cardsPerDay, int timesPerDay, int days) async {
+    return await _apiProvider.setRevisionControls(cardsPerDay, timesPerDay, days);
+  }
+
+  Future<RevisionControlsGetResponse> getRevisionControls() async {
+    return await _apiProvider.getRevisionControls();
   }
 }

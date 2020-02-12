@@ -43,6 +43,15 @@ dependencies:
   quill_delta: any
   flutter_material_color_picker: any
   flutter_image: any
+  dio: any
+  firebase_analytics: any
+  flare_flutter: any
+  percent_indicator: any
+  firebase_messaging:
+    git:
+      url: git://github.com/FirebaseExtended/flutterfire.git
+      ref: c0f8aa0e3178b2b7a44f2da2ebb2e768c51d3c21
+      path: packages/firebase_messaging
   flutter_test:
     sdk: flutter
 
@@ -64,9 +73,15 @@ flutter:
     - assets/images/google_logo.png
     - assets/images/ic_launcher.png
     - assets/images/avatar.png
+    - assets/images/Filip.flr
+    - assets/images/success.flr
+    - assets/images/revision.flr
+    - assets/images/Coin.flr
+    - assets/images/books.flr
     - assets/organise.png
     - assets/read.png
     - assets/revision.png
+    - assets/images/loading.flr
 
   # assets:
   #  - images/a_dot_burr.jpeg

@@ -7,8 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CollectionsScreen extends StatelessWidget {
 
   final Repository _repository = Repository();
+  final SharedPreferences prefs;
 
-  CollectionsScreen({Key key, @required Repository repository})
+  CollectionsScreen({Key key, @required Repository repository, @required this.prefs})
       : super(key: key);
 
   @override
@@ -16,7 +17,7 @@ class CollectionsScreen extends StatelessWidget {
     return Scaffold(
       body: BlocProvider<CollectionsBloc>(
         create: (context) => CollectionsBloc(repository: _repository)..add(Fetch()),
-        child: CollectionsPage(repository: _repository),
+        child: CollectionsPage(repository: _repository, prefs: prefs,),
       ),
     );
   }

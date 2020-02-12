@@ -1,5 +1,7 @@
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rewizzit/firebase_notification_handler.dart';
 import 'package:rewizzit/screens/tabs/account/account-screen.dart';
 import 'package:rewizzit/screens/tabs/discover/discover.dart';
 import 'package:rewizzit/screens/tabs/revision/revision-screen.dart';
@@ -9,17 +11,27 @@ class HomeScreen extends StatefulWidget {
 
   final SharedPreferences preferences;
 
-  HomeScreen({Key key, @required this.preferences})
+  final FirebaseAnalyticsObserver observer;
+
+  HomeScreen({Key key, @required this.preferences, @required this.observer})
       : super(key: key);
 
+  static const String routeName = '/tab';
+
   @override
-  HomeScreenState createState() => HomeScreenState();
+  HomeScreenState createState() => HomeScreenState(observer);
 }
 
 // SingleTickerProviderStateMixin is used for animation
-class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  // Create a tab controller
+class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin, RouteAware  {
   TabController controller;
+
+  int selectedIndex = 0;
+
+  final FirebaseAnalyticsObserver observer;
+
+
+  HomeScreenState(this.observer);
 
   SharedPreferences get preference => widget.preferences;
 
@@ -27,16 +39,52 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
 
+    new FirebaseNotifications().setUpFirebase();
     // Initialize the Tab Controller
-    controller = TabController(length: 3, vsync: this);
+    controller = TabController(
+        length: 3,
+        vsync: this
+
+    );
+    controller.addListener(() {
+      setState(() {
+        if (selectedIndex != controller.index) {
+          selectedIndex = controller.index;
+          _sendCurrentTabToAnalytics();
+        }
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    observer.subscribe(this, ModalRoute.of(context));
   }
 
   @override
   void dispose() {
-    // Dispose of the Tab Controller
+    observer.unsubscribe(this);
     controller.dispose();
     super.dispose();
   }
+
+  @override
+  void didPush() {
+    _sendCurrentTabToAnalytics();
+  }
+
+  @override
+  void didPopNext() {
+    _sendCurrentTabToAnalytics();
+  }
+
+  void _sendCurrentTabToAnalytics() {
+    observer.analytics.setCurrentScreen(
+      screenName: '${HomeScreen.routeName}/tab$selectedIndex',
+    );
+  }
+
 
   @override
   @override

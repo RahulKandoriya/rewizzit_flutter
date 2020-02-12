@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:rewizzit/data/models/models/card-model.dart';
-import 'package:rewizzit/data/models/models/models.dart';
+import 'package:rewizzit/data/models/api_response/api-response.dart';
 
 abstract class CollectionsState extends Equatable {
   const CollectionsState();
@@ -13,15 +12,15 @@ abstract class CollectionsState extends Equatable {
 class Loading extends CollectionsState {}
 
 class Loaded extends CollectionsState {
-  final List<TopNode> topNodes;
+  final SubNodesResponse subNodesResponse;
 
-  const Loaded({@required this.topNodes});
-
-  @override
-  List<Object> get props => [topNodes];
+  const Loaded({@required this.subNodesResponse});
 
   @override
-  String toString() => 'Loaded { items: ${topNodes.length} }';
+  List<Object> get props => [subNodesResponse];
+
+  @override
+  String toString() => 'Loaded { items: ${subNodesResponse.data.nodes.length} }';
 }
 
 class Failure extends CollectionsState {}

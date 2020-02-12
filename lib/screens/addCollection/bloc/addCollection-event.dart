@@ -8,29 +8,53 @@ abstract class AddCollectionEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Fetch extends AddCollectionEvent {}
+class TitleChanged extends AddCollectionEvent {
+  final String title;
 
-class Delete extends AddCollectionEvent {
-  final String id;
-
-  const Delete({@required this.id});
+  const TitleChanged({@required this.title});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [title];
 
   @override
-  String toString() => 'Delete { id: $id }';
+  String toString() => 'TitleChanged { title :$title }';
 }
 
-class Deleted extends AddCollectionEvent {
-  final String id;
+class Submitted extends AddCollectionEvent {
+  final String title;
+  final bool isCardNode;
 
-  const Deleted({@required this.id});
+  const Submitted({
+    @required this.title,
+    @required this.isCardNode,
+  });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [title, isCardNode];
 
   @override
-  String toString() => 'Deleted { id: $id }';
+  String toString() {
+    return 'Submitted { title: $title, isCardNode: $isCardNode }';
+  }
+}
+
+class SubmitPressed extends AddCollectionEvent {
+  final String title;
+  final bool isCardNode;
+  final String parentNodeId;
+
+  const SubmitPressed({
+    @required this.title,
+    @required this.isCardNode,
+    @required this.parentNodeId,
+  });
+
+  @override
+  List<Object> get props => [title, isCardNode, parentNodeId];
+
+  @override
+  String toString() {
+    return 'SubmitPressed { title: $title, isCardNode: $isCardNode, parentNodeId: $parentNodeId }';
+  }
 }
 

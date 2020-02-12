@@ -35,12 +35,28 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
       RevisionEvent event,
       ) async* {
     if (event is FetchRevisionControls) {
+
+      yield Loading();
       try {
-        yield Loaded();
+        final getRevisionControls = await _repository.getRevisionControls();
+
+
+
+        yield RevisionControlsLoaded( revisionControlsGetResponse: getRevisionControls,);
+      } catch (_) {
+        yield Failure();
+      }
+    }
+
+    if (event is PostRevisionControls) {
+
+      yield Loading();
+      try {
+        final revisionControlsPostResponse = await _repository.setRevisionControls(event.cardsPerDay, event.timesPerCard, event.days);
+        yield PostRevisionControlsLoaded( revisionControlsPostResponse: revisionControlsPostResponse,);
       } catch (_) {
         yield Failure();
       }
     }
   }
-
 }

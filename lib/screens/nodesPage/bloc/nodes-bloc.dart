@@ -37,12 +37,24 @@ class NodesBloc extends Bloc<NodesEvent, NodesState> {
     if (event is Fetch) {
       yield Loading();
       try {
-        final nodes = await _repository.fetchSubNodesList(event.parentNodeId);
-        yield Loaded(nodes: nodes);
+        final subNodesResponse = await _repository.fetchSubNodesList(event.parentNodeId);
+        yield Loaded(subNodesResponse: subNodesResponse);
       } catch (_) {
         yield Failure();
       }
     }
+
+    if (event is Delete) {
+      yield DeleteLoading();
+      try {
+        final deleteResponse = await _repository.deleteNode(event.nodeId);
+        yield Deleted(deleteResponse: deleteResponse,);
+      } catch (_) {
+        yield DeleteFailure();
+      }
+    }
   }
+
+
 
 }

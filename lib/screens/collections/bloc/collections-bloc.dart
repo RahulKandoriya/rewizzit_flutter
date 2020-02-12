@@ -35,9 +35,10 @@ class CollectionsBloc extends Bloc<CollectionsEvent, CollectionsState> {
       CollectionsEvent event,
       ) async* {
     if (event is Fetch) {
+      yield Loading();
       try {
         final topNodes = await _repository.fetchTopNodesList();
-        yield Loaded(topNodes: topNodes);
+        yield Loaded(subNodesResponse: topNodes);
       } catch (_) {
         yield Failure();
       }

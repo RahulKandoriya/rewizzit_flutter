@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:rewizzit/data/models/api_response/explore-data-response.dart';
 import 'package:rewizzit/data/models/models/card-model.dart';
 
 abstract class RecentCardsState extends Equatable {
@@ -12,15 +13,15 @@ abstract class RecentCardsState extends Equatable {
 class Loading extends RecentCardsState {}
 
 class Loaded extends RecentCardsState {
-  final List<CardModel> bookmarkCards;
+  final List<RecentCards> recentCards;
 
-  const Loaded({@required this.bookmarkCards});
-
-  @override
-  List<Object> get props => [bookmarkCards];
+  const Loaded({@required this.recentCards});
 
   @override
-  String toString() => 'Loaded { items: ${bookmarkCards.length} }';
+  List<Object> get props => [recentCards];
+
+  @override
+  String toString() => 'Loaded { items: ${recentCards.length} }';
 }
 
 class Failure extends RecentCardsState {}

@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/revisionCards/bloc/bloc.dart';
 import 'package:rewizzit/screens/revisionCards/bloc/revision-cards-bloc.dart';
 import 'package:rewizzit/screens/revisionCards/bloc/revision-cards-state.dart';
 import 'package:rewizzit/screens/components/revision_card_model_widget/revision-card-model-widget.dart';
+import 'package:rewizzit/screens/revisoin_complete_screen/revisoin-complete-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RevisionCardsPage extends StatefulWidget {
 
   final Repository repository;
   final int cardPosition;
-  RevisionCardsPage({Key key, @required  this.repository, @required this.cardPosition})
+  final SharedPreferences prefs;
+
+  RevisionCardsPage({Key key, @required  this.repository, @required this.cardPosition, @required this.prefs,})
       : super(key: key);
 
 
@@ -22,30 +26,30 @@ class RevisionCardsPage extends StatefulWidget {
 
 class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTickerProviderStateMixin {
 
+  SharedPreferences get prefs => widget.prefs;
+  int get cardPosition => widget.cardPosition;
 
-  PageController controller = PageController(viewportFraction: .8, keepPage: true);
+  PageController controller;
   var currentPageValue = 0.0;
   bool isAppBarUp;
+
+  int revisionLength;
+
+  RevisionCardsBloc _revisionCardsBloc;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
 
-      ///controller.jumpToPage(widget.cardPosition);
-
-    });
+    controller = PageController(initialPage: cardPosition, viewportFraction: .8, keepPage: true);
 
   }
-
-  SharedPreferences prefs;
-
 
 
   @override
   Widget build(BuildContext context) {
 
-
+    _revisionCardsBloc = BlocProvider.of<RevisionCardsBloc>(context);
     return SafeArea(
       child: Stack(
         children: <Widget>[
@@ -58,109 +62,99 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(height: 20,),
-                      Text("Cards",
-                        style: GoogleFonts.josefinSans(
-                          textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(height: 10,),
-                      Text("Revision Cards",
-                        style: GoogleFonts.josefinSans(
-                          textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 500,
-                    width: double.infinity,
-                    child: BlocBuilder<RevisionCardsBloc, RevisionCardsState>(
-                      builder: (context, state) {
-                        if (state is Failure) {
-                          return Center(
-                            child: Text('failed to fetch Data'),
-                          );
-                        }
-                        if (state is Loaded) {
-                          if (state.revisionCards.isEmpty) {
-                            return Center(
-                              child: Text('No Cards'),
-                            );
-                          }
-                          return PageView.builder(
-                            itemCount: state.revisionCards.length,
-                            itemBuilder: (context, i) => RevisionCardModelWidget(revisionCard: state.revisionCards[i],),
-                            controller: controller,
-                          );
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: 10,),
-                      Container(
-                        margin: EdgeInsets.only(left: 100, right: 100),
-                        child: RaisedButton(
-                          color: Colors.deepPurple,
-                          onPressed: () {
-
-                          },
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.done_outline,
-                                  size: 25,
-                                  color: Colors.white,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text("Revise",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: (){
+                          refresh();
+                        },
+                        child: Text("Revision",
+                          style: GoogleFonts.josefinSans(
+                            textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(height: 10,),
+                      Container(
+                        width: 230,
+                        child: Text("Revising same card in less than an hour won't count in progress",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.josefinSans(
+                            textStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ),
                     ],
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      child: BlocBuilder<RevisionCardsBloc, RevisionCardsState>(
+                        builder: (context, state) {
+                          if (state is Failure) {
+                            return Center(
+                              child: Text('failed to fetch Data'),
+                            );
+                          }
+                          if (state is Loaded) {
+                            if (state.revisionCards.isEmpty) {
+                              return Center(
+                                child: Text('No Cards'),
+                              );
+                            }
+
+                            revisionLength = state.revisionCards.length;
+
+                            return PageView.builder(
+                              itemCount: state.revisionCards.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) => RevisionCardModelWidget(revisionCard: state.revisionCards[i], prefs: prefs, revisionCardsBloc: _revisionCardsBloc, notifyParent: refresh,),
+                              controller: controller,
+                            );
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
+          Padding(
               padding: EdgeInsets.only(left: 20, top: 30),
-              child: Icon(
-                  Icons.close
-              ),
-            ),
-          )
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                    Icons.close
+                ),
+              )
+          ),
         ],
       ),
     );
   }
 
+  refresh() {
+
+    if(revisionLength == (controller.page +1).toInt() ){
+
+      WidgetsBinding.instance.addPostFrameCallback((_){
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCompleteScreen()));
+      });
+    } else {
+
+      controller.animateToPage((controller.page + 1).toInt(), duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+    }
+  }
+
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 

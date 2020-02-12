@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_image/network.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/models/models/user.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/about_screen/about-screen.dart';
 import 'package:rewizzit/screens/tabs/account/account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rewizzit/authentication_bloc/bloc.dart';
@@ -69,7 +71,11 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               Spacer(),
               IconButton(
                 icon: Icon(Icons.info_outline),
-                onPressed: () {},
+                onPressed: () {
+
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AboutScreen()));
+
+                },
               ),
               IconButton(
                 icon: Icon(FontAwesome.sign_out),
@@ -133,51 +139,39 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                       ),
                     ),
 
-                    SizedBox(height: 50,),
                     Container(
                       margin: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 20),
                       width: double.infinity,
                       decoration: new BoxDecoration(
-                        color: Colors.purple,
-                        gradient: new LinearGradient(
-                            colors: [Colors.purple, Colors.lightBlue[200]],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight
-                        ),
+                        color: Colors.deepPurple,
                         borderRadius: new BorderRadius.circular(25.0),                        ),
-                      height: 180,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      height: 200,
+                      child: Stack(
                         children: <Widget>[
                           Center(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text("Read Easily\nOrganise Well\nRevise Effectivly",
                                   style: GoogleFonts.josefinSans(
-                                    textStyle: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.normal, height: 1.5),
+                                    textStyle: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.normal, height: 1.5),
                                   ),
+                                  textAlign: TextAlign.end,
                                 ),
                               )
                           ),
-                          Spacer(),
                           Center(
-                            child: Icon(
-                              Icons.done_outline,
-                              size: 80,
-                              color: Colors.white,
+                            child: Container(
+                              child: FlareActor("assets/images/Coin.flr", alignment:Alignment.center, fit:BoxFit.fill, animation:"boom"),
                             ),
                           ),
-                          SizedBox(width: 30),
                         ],
-
                       ),
                     ),
 
                     Container(
                       margin: EdgeInsets.only(left: 20, right: 20),
                       child: RaisedButton(
-                        color: Colors.deepPurple,
+                        color: Colors.green,
                         onPressed: () {
 
                         },
@@ -195,7 +189,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
-                                child: Text("Unlock Full Access",
+                                child: Text("Upgrade",
                                   style: GoogleFonts.josefinSans(
                                     textStyle: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                                   ),

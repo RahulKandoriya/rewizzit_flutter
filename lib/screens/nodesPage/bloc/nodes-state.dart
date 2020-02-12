@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:rewizzit/data/models/models/card-model.dart';
-import 'package:rewizzit/data/models/models/node.dart';
+import 'package:rewizzit/data/models/api_response/api-response.dart';
 
 abstract class NodesState extends Equatable {
   const NodesState();
@@ -12,16 +11,36 @@ abstract class NodesState extends Equatable {
 
 class Loading extends NodesState {}
 
+class DeleteLoading extends NodesState {}
+
 class Loaded extends NodesState {
-  final List<Node> nodes;
+  final SubNodesResponse subNodesResponse;
 
-  const Loaded({@required this.nodes});
-
-  @override
-  List<Object> get props => [nodes];
+  const Loaded({@required this.subNodesResponse});
 
   @override
-  String toString() => 'Loaded { items: ${nodes.length} }';
+  List<Object> get props => [subNodesResponse];
+
+  @override
+  String toString() => 'Loaded { items: ${subNodesResponse.data.nodes.length} }';
 }
+
+class Deleted extends NodesState {
+  final String deleteResponse;
+
+  const Deleted({@required this.deleteResponse,});
+
+  @override
+  List<Object> get props => [deleteResponse,];
+
+  @override
+  String toString() => 'Bookmarked { items: $deleteResponse }';
+}
+
+class DeleteFailure extends NodesState {}
+
+
+
+
 
 class Failure extends NodesState {}

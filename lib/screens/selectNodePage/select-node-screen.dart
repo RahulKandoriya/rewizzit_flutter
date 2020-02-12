@@ -16,7 +16,7 @@ class SelectNodeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<SelectNodeBloc>(
-        create: (context) => SelectNodeBloc(repository: _repository)..add(Fetch(parentNodeId: "5e16f2fb8cc29a2feb748391")),
+        create: (context) => SelectNodeBloc(repository: _repository)..add(FetchSubNodes(parentNodeId: "")),
         child: SelectNodePage(repository: _repository, prefs: prefs),
       ),
     );

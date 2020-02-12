@@ -10,8 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DailyCardsPage extends StatefulWidget {
 
   final Repository _repository;
+  final SharedPreferences prefs;
 
-  DailyCardsPage({Key key, @required Repository repository})
+  DailyCardsPage({Key key, @required Repository repository, @required this.prefs})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -22,7 +23,7 @@ class DailyCardsPage extends StatefulWidget {
 
 class _DailyCardsPageState extends State<DailyCardsPage> with SingleTickerProviderStateMixin {
 
-
+  SharedPreferences get prefs => widget.prefs;
   PageController controller = PageController(keepPage: true, viewportFraction: 0.8);
   var currentPageValue = 0.0;
   bool isAppBarUp;
@@ -34,8 +35,6 @@ class _DailyCardsPageState extends State<DailyCardsPage> with SingleTickerProvid
     super.initState();
   }
 
-
-  SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -109,18 +108,17 @@ class _DailyCardsPageState extends State<DailyCardsPage> with SingleTickerProvid
               ),
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
+          Padding(
               padding: EdgeInsets.only(left: 20, top: 30),
-              child: Icon(
-                  Icons.close
-              ),
-            ),
-          )
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                    Icons.close
+                ),
+              )
+          ),
         ],
       ),
     );

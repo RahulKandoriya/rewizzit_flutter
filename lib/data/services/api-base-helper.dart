@@ -4,7 +4,7 @@ import 'package:rewizzit/data/models/models/user.dart';
 import 'dart:convert';
 import 'package:rewizzit/data/services/app-exceptions.dart';
 import 'dart:async';
-
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiBaseHelper {
@@ -26,6 +26,7 @@ class ApiBaseHelper {
     var responseJson;
     try {
       final response = await http.get(_baseUrl + url, headers: await fetchAuthToken());
+
       responseJson = _returnResponse(response);
     } on SocketException {
       print('No net');
@@ -51,12 +52,81 @@ class ApiBaseHelper {
     print('api get recieved!');
     return responseJson;
   }
+
+  postData(Map<String, dynamic> body)async{
+    prefs = await SharedPreferences.getInstance();
+    var dio = Dio();
+    dio.interceptors.add(InterceptorsWrapper(
+        onRequest:(RequestOptions options) async {
+          // Do something before request is sent
+          options.headers['Authorization'] = User.fromJson(json.decode(prefs.getString("user"))).authorizeToken;
+          return options; //continue
+          // If you want to resolve the request with some custom data，
+          // you can return a `Response` object or return `dio.resolve(data)`.
+          // If you want to reject the request with a error message,
+          // you can return a `DioError` object or return `dio.reject(errMsg)`
+        },
+        onResponse:(Response response) async {
+          // Do something with response data
+          return response; // continue
+        },
+        onError: (DioError e) async {
+          // Do something with response error
+          return  e;//continue
+        }
+    ));
+    try {
+      FormData formData = new FormData.fromMap(body);
+      var response = await dio.post( _baseUrl + "new-card", data: formData);
+      print(response.data);
+      return response.data;
+    } catch (e) {
+      print(e);
+      print(e);
+    }
+  }
+
+  editCardData(Map<String, dynamic> body)async{
+    prefs = await SharedPreferences.getInstance();
+    var dio = Dio();
+    dio.interceptors.add(InterceptorsWrapper(
+        onRequest:(RequestOptions options) async {
+          // Do something before request is sent
+          options.headers['Authorization'] = User.fromJson(json.decode(prefs.getString("user"))).authorizeToken;
+          return options; //continue
+          // If you want to resolve the request with some custom data，
+          // you can return a `Response` object or return `dio.resolve(data)`.
+          // If you want to reject the request with a error message,
+          // you can return a `DioError` object or return `dio.reject(errMsg)`
+        },
+        onResponse:(Response response) async {
+          // Do something with response data
+          return response; // continue
+        },
+        onError: (DioError e) async {
+          // Do something with response error
+          return  e;//continue
+        }
+    ));
+    try {
+      FormData formData = new FormData.fromMap(body);
+      var response = await dio.post( _baseUrl + "card-edit", data: formData);
+      print(response.data);
+      return response.data;
+    } catch (e) {
+      print(e);
+      print(e);
+    }
+  }
+
 }
+
 
 dynamic _returnResponse(http.Response response) {
   switch (response.statusCode) {
     case 200:
       var responseJson = json.decode(response.body.toString());
+      print(response.toString());
       print(responseJson);
       return responseJson;
     case 400:

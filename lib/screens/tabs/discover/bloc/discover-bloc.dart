@@ -36,51 +36,12 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
       ) async* {
     if(event is Fetch){
 
+      yield Loading();
       try{
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        final revisionCards = await _repository.fetchRevisionCards();
-        final cardNodes = await _repository.fetchCardNodesList();
-        final topNodes = await _repository.fetchTopNodesList();
-        yield Loaded(bookmarkCards: bookmarkCards, revisionCards: revisionCards, cardNodes: cardNodes, topNodes: topNodes);
+        final exploreResponseData = await _repository.fetchExploreDataList();
+        yield Loaded(bookmarkCards: exploreResponseData.bookmarkedCards, revisionCards: exploreResponseData.revisions, cardNodes: exploreResponseData.cardNodeList, topNodes: exploreResponseData.topNodes, recentCards: exploreResponseData.recentCards);
       } catch (_){
         yield Failure();
-      }
-    }
-    if (event is FetchRevisionCards) {
-      try {
-        try{
-          final revisionCards = await _repository.fetchRevisionCards();
-          yield RevisionCardsLoaded(revisionCards: revisionCards);
-        } catch (_){
-          yield RevisionCardsFailure();
-        }
-      } catch (_) {
-        yield Failure();
-      }
-    }
-    if(event is FetchBookmark){
-
-      try{
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield BookmarkLoaded(bookmarkCards: bookmarkCards);
-      } catch (_){
-        yield BookmarkFailure();
-      }
-    }
-    if(event is FetchCardNodes){
-      try{
-        final cardNodes = await _repository.fetchCardNodesList();
-        yield CardNodesLoaded(cardNodes: cardNodes);
-      } catch (_){
-        yield CardNodesFailure();
-      }
-    }
-    if(event is FetchTopNodes){
-      try{
-        final topNodes = await _repository.fetchTopNodesList();
-        yield TopNodesLoaded(topNodes: topNodes);
-      } catch (_){
-        yield TopNodesFailure();
       }
     }
 

@@ -1,9 +1,11 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/services/repository.dart';
 import 'package:rewizzit/screens/addCard/addCard-screen.dart';
+import 'package:rewizzit/screens/allRevisionCards/all-revision-cards-screen.dart';
 import 'package:rewizzit/screens/bookmark/bookmark-screen.dart';
 import 'package:rewizzit/screens/collections/collections-screen.dart';
 import 'package:rewizzit/screens/dailyCards/daily-cards-screen.dart';
@@ -33,7 +35,7 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
 
   Repository get _repository => widget._repository;
 
-  SharedPreferences get preference => widget.preference;
+  SharedPreferences get prefs => widget.preference;
 
   TabController controller;
 
@@ -45,7 +47,6 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
     super.initState();
     controller = TabController(length: 3, vsync: this);
 
-    _discoverBloc = BlocProvider.of<DiscoverBloc>(context);
 
   }
 
@@ -75,13 +76,10 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
               ),
               Spacer(),
               IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {},
-              ),
-              IconButton(
                 icon: Icon(Icons.add_circle),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddCardScreen(repository: _repository, prefs: preference,)));
+
+                  _navigateAndAddCard(context);
                 },
               ),
               SizedBox(width: 8),
@@ -93,14 +91,14 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
               [
                 GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DailyCardsScreen(repository: _repository)));
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository, cardPosition: 0, prefs: prefs,)));
                   },
                   behavior: HitTestBehavior.translucent,
                   child: Container(
-                    margin: const EdgeInsets.all(20),
+                    margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
                     width: double.infinity,
                     decoration: new BoxDecoration(
-                      color: Colors.purple,
+                      color: Colors.yellow,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey[350],
@@ -112,755 +110,766 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                           ),
                         )
                       ],
-                      gradient: new LinearGradient(
-                          colors: [Colors.purple, Colors.lightBlue[200]],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight
-                      ),
                       borderRadius: new BorderRadius.circular(25.0),
                     ),
-                    height: 180,
+                    height: 150,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Center(
                             child: Padding(
                               padding: EdgeInsets.only(left: 30),
-                              child: Text("Daily\nCards",
+                              child: Text("Today's\nRevision",
                                 style: GoogleFonts.josefinSans(
-                                  textStyle: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold, height: 1.3),
+                                  textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold, height: 1.3),
                                 ),
                               ),
                             )
                         ),
-                        Spacer(),
-                        Center(
-                          child: Icon(
-                            Icons.description,
-                            size: 100,
-                            color: Colors.white,
+                        Expanded(
+                          child: Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 20, bottom: 20),
+                              child: FlareActor("assets/images/revision.flr",
+                                  alignment:Alignment.center,
+                                  fit:BoxFit.fitHeight, animation:"Untitled"),
+                            ),
                           ),
                         ),
-                        SizedBox(width: 30),
                       ],
 
                     ),
                   ),
                 ),
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(width: 20),
-                          Text("Recently Added",
-                            style: GoogleFonts.josefinSans(
-                              textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                            ),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DailyCardsScreen(repository: _repository, prefs: prefs,)));
+                  },
+                  behavior: HitTestBehavior.translucent,
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    width: double.infinity,
+                    decoration: new BoxDecoration(
+                      color: Colors.pink,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[350],
+                          blurRadius: 8.0, // has the effect of softening the shadow
+                          spreadRadius: 3.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            3.0, // horizontal, move right 10
+                            3.0, // vertical, move down 10
                           ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: (){
+                        )
+                      ],
 
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardsScreen(repository: _repository)));
-
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Chip(
-                                  backgroundColor: Colors.grey[300],
-                                  label: Text("See all",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      borderRadius: new BorderRadius.circular(25.0),
+                    ),
+                    height: 150,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            margin: EdgeInsets.only(left: 20),
+                            width: 150,
+                            height: 150,
+                            child: FlareActor("assets/images/loading.flr", alignment:Alignment.center, fit:BoxFit.fitHeight, animation:"roll"),
                           ),
-                          SizedBox(width: 20),
+                        ),
 
-                        ],
-                      ),
-                      BlocBuilder<DiscoverBloc, DiscoverState>(
-                        builder: (context, state) {
-                          if (state is Failure) {
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: Text('Failed to Fetch Data'),
-                              ),
-                            );
-                          }
-                          if (state is Loaded) {
-                            if (state.bookmarkCards.isEmpty) {
-                              return new Container(
-                                width: double.infinity,
-                                height: 250,
-                                child: Center(
-                                  child: Text('No Data'),
+                        Spacer(),
+                        Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 40),
+                              child: Text("Daily\nCards",
+                                style: GoogleFonts.josefinSans(
+                                  textStyle: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold, height: 1.3),
                                 ),
-                              );
-                            }
-                            return Container(
-                              width: double.infinity,
-                              height: 300,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 5,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(
-                                          margin: EdgeInsets.only(left: 20, bottom: 15),
-                                          child: GestureDetector(
-                                            onTap: (){
-                                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardsScreen(repository: _repository)));
-
-                                            },
-                                            behavior: HitTestBehavior.translucent,
-                                            child: Container(
-                                              height: 250,
-                                              margin: const EdgeInsets.only(top: 10),
-                                              padding: EdgeInsets.all(10),
-                                              width: 156,
-                                              decoration: new BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey[350],
-                                                    blurRadius: 8.0, // has the effect of softening the shadow
-                                                    spreadRadius: 3.0, // has the effect of extending the shadow
-                                                    offset: Offset(
-                                                      3.0, // horizontal, move right 10
-                                                      3.0, // vertical, move down 10
-                                                    ),
-                                                  )
-                                                ],
-                                                borderRadius: new BorderRadius.circular(10.0),                        ),
-                                              child: Text("The lion is a species in the family Felidae; it is a muscular, deep-chested cat with a short, rounded head. Lion is known as king because of his lifestyle of being highly social",
-                                                style: GoogleFonts.josefinSans(
-                                                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 22),
-                                          child: Text("Lion Card",
-                                            style: GoogleFonts.josefinSans(
-                                              textStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal,),
-                                            ),
-                                          ),
-                                        )
-
-                                      ],
-                                    );
-                                  }
+                                textAlign: TextAlign.end,
                               ),
-                            );
-                          }
-                          if(state is BookmarkLoading){
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
-                          return new Container(
-                            width: double.infinity,
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20,),
+                            )
+                        ),
 
-                    ],
+                      ],
+
+                    ),
                   ),
                 ),
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                BlocBuilder<DiscoverBloc, DiscoverState>(
+                  builder: (context, state) {
+                    if (state is Failure) {
+                      return new Container(
+                        height: 300,
+                        width: double.infinity,
+                        child: Center(
+                          child: Text('Failed to Fetch Data'),
+                        ),
+                      );
+                    }
+                    if (state is Loaded) {
+                      if (state.toString() == null) {
+                        return new Container(
+                          height: 300,
+                          width: double.infinity,
+                          child: Center(
+                            child: Text('No Data'),
+                          ),
+                        );
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          SizedBox(width: 20),
-                          Text("Collections",
-                            style: GoogleFonts.josefinSans(
-                              textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CollectionsScreen(repository: _repository)));
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Chip(
-                                  backgroundColor: Colors.grey[300],
-                                  label: Text("See all",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 20),
-
-                        ],
-                      ),
-                      BlocBuilder<DiscoverBloc, DiscoverState>(
-                        builder: (context, state) {
-                          if (state is Failure) {
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: Text('Failed to Fetch Data'),
-                              ),
-                            );
-                          }
-                          if (state is Loaded) {
-                            if (state.topNodes.isEmpty) {
-                              return new Container(
-                                width: double.infinity,
-                                height: 250,
-                                child: Center(
-                                  child: Text('No Data'),
-                                ),
-                              );
-                            }
-                            return Container(
-                              width: double.infinity,
-                              height: 200,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: state.topNodes.length,
-                                itemBuilder: (context, position){
-                                  return Container(
-                                    margin: EdgeInsets.only(left : 20, bottom: 15),
-                                    child: GestureDetector(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: state.topNodes[position].sId,)));
-                                      },
-                                      behavior: HitTestBehavior.translucent,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(top: 10),
-                                        width: 247,
-                                        decoration: new BoxDecoration(
-                                          color: Colors.purple,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey[350],
-                                              blurRadius: 8.0, // has the effect of softening the shadow
-                                              spreadRadius: 3.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                3.0, // horizontal, move right 10
-                                                3.0, // vertical, move down 10
-                                              ),
-                                            )
-                                          ],
-                                          gradient: new LinearGradient(
-                                              colors: [Colors.red, Colors.pink],
-                                              begin: Alignment.topRight,
-                                              end: Alignment.topLeft
-                                          ),
-                                          borderRadius: new BorderRadius.circular(10.0),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Center(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(left: 20),
-                                                    child : Text('${state.topNodes[position].title}',
-                                                      style: GoogleFonts.josefinSans(
-                                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                                      ),
-                                                    ),
-                                                  )
-                                              ),
-                                            ),
-                                            SizedBox(width: 15,),
-                                            Center(
-                                              child: Icon(
-                                                Icons.collections_bookmark,
-                                                size: 50,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            SizedBox(width: 30),
-                                          ],
-
-                                        ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Recently Added",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  );
-                                },
-
-                              ),
-                            );
-                          }
-                          return new Container(
-                            width: double.infinity,
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(width: 20),
-                          Text("Bookmarked Cards",
-                            style: GoogleFonts.josefinSans(
-                              textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: (){
-
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BookmarkScreen(repository: _repository)));
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Chip(
-                                  backgroundColor: Colors.grey[300],
-                                  label: Text("See all",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 20),
-
-                        ],
-                      ),
-                      BlocBuilder<DiscoverBloc, DiscoverState>(
-                        builder: (context, state) {
-                          if (state is Failure) {
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: Text('Failed to Fetch Data'),
-                              ),
-                            );
-                          }
-                          if (state is Loaded) {
-                            if (state.bookmarkCards.isEmpty) {
-                              return new Container(
-                                width: double.infinity,
-                                height: 250,
-                                child: Center(
-                                  child: Text('No Data'),
-                                ),
-                              );
-                            }
-                            return Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: state.bookmarkCards.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(
-                                          margin: EdgeInsets.only(left: 20, bottom: 15),
-                                          child: GestureDetector(
-                                            onTap: (){
-                                              ///Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BookmarkScreen(repository: _repository)));
-                                            },
-                                            behavior: HitTestBehavior.translucent,
-                                            child: Container(
-                                              height: 200,
-                                              margin: const EdgeInsets.only(top: 10),
-                                              padding: EdgeInsets.all(10),
-                                              width: 124,
-                                              decoration: new BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey[350],
-                                                    blurRadius: 8.0, // has the effect of softening the shadow
-                                                    spreadRadius: 3.0, // has the effect of extending the shadow
-                                                    offset: Offset(
-                                                      3.0, // horizontal, move right 10
-                                                      3.0, // vertical, move down 10
-                                                    ),
-                                                  )
-                                                ],
-                                                borderRadius: new BorderRadius.circular(10.0),                        ),
-                                              child: Text('${state.bookmarkCards[index].content}',
-                                                style: GoogleFonts.josefinSans(
-                                                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 22),
-                                          child: Text('${state.bookmarkCards[index].parentNode.title}',
-                                            style: GoogleFonts.josefinSans(
-                                              textStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal,),
-                                            ),
-                                          ),
-                                        )
-
-                                      ],
-                                    );
-                                  }
-                              ),
-                            );
-                          }
-                          return new Container(
-                            width: double.infinity,
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20,),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(width: 20),
-                          Text("Recent Card Nodes",
-                            style: GoogleFonts.josefinSans(
-                              textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardNodesScreen(repository: _repository)));
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Chip(
-                                  backgroundColor: Colors.grey[300],
-                                  label: Text("See all",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 20),
-
-                        ],
-                      ),
-                      BlocBuilder<DiscoverBloc, DiscoverState>(
-                        builder: (context, state) {
-                          if (state is Failure) {
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: Text('Failed to Fetch Data'),
-                              ),
-                            );
-                          }
-                          if (state is Loaded) {
-                            if (state.cardNodes.isEmpty) {
-                              return new Container(
-                                width: double.infinity,
-                                height: 250,
-                                child: Center(
-                                  child: Text('No Data'),
-                                ),
-                              );
-                            }
-                            return Container(
-                              width: double.infinity,
-                              height: 150,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: state.cardNodes.length,
-                                itemBuilder: (context, position){
-                                  return Container(
-                                    margin: EdgeInsets.only(left: 20, bottom: 15),
-                                    child: GestureDetector(
+                                    Spacer(),
+                                    GestureDetector(
                                       onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[position].sId,)));
+
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardsScreen(repository: _repository, cardPosition: 0, prefs: prefs,)));
 
                                       },
                                       behavior: HitTestBehavior.translucent,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(top: 10),
-                                        width: 247,
-                                        decoration: new BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey[350],
-                                              blurRadius: 8.0, // has the effect of softening the shadow
-                                              spreadRadius: 3.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                3.0, // horizontal, move right 10
-                                                3.0, // vertical, move down 10
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
                                               ),
-                                            )
-                                          ],
-                                          gradient: new LinearGradient(
-                                              colors: [Colors.brown, Colors.brown[200]],
-                                              begin: Alignment.topRight,
-                                              end: Alignment.topLeft
+                                            ),
                                           ),
-                                          borderRadius: new BorderRadius.circular(10.0),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Center(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(left: 20),
-                                                    child : Text('${state.cardNodes[position].title}',
-                                                      style: GoogleFonts.josefinSans(
-                                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                                      ),
-                                                    ),
-                                                  )
-                                              ),
-                                            ),
-                                            SizedBox(width: 15,),
-                                            Center(
-                                              child: Icon(
-                                                Icons.book,
-                                                size: 50,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            SizedBox(width: 30),
-                                          ],
-
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                },
+                                    SizedBox(width: 20),
 
-                              ),
-                            );
-                          }
-                          return new Container(
-                            width: double.infinity,
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(width: 20),
-                          Text("Revision Cards",
-                            style: GoogleFonts.josefinSans(
-                              textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                  ],
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 300,
+                                  child: state.recentCards.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                      "No Recent Cards"
+                                    ),
+                                  )
+                                  : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: state.recentCards.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 20, bottom: 15),
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardsScreen(repository: _repository, prefs: prefs, cardPosition: index,)));
+
+                                                    },
+                                                    behavior: HitTestBehavior.translucent,
+                                                    child: Container(
+                                                      height: 230,
+                                                      margin: const EdgeInsets.only(top: 10),
+                                                      padding: EdgeInsets.all(10),
+                                                      width: 156,
+                                                      decoration: new BoxDecoration(
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey[350],
+                                                            blurRadius: 8.0, // has the effect of softening the shadow
+                                                            spreadRadius: 3.0, // has the effect of extending the shadow
+                                                            offset: Offset(
+                                                              3.0, // horizontal, move right 10
+                                                              3.0, // vertical, move down 10
+                                                            ),
+                                                          )
+                                                        ],
+                                                        borderRadius: new BorderRadius.circular(10.0),                        ),
+                                                      child: Text('${state.recentCards[index].content}',
+                                                        style: GoogleFonts.amaranth(
+                                                          textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 150,
+                                                  margin: EdgeInsets.only(left: 22),
+                                                  child: Text('${state.recentCards[index].parentNode.title}',
+                                                    style: GoogleFonts.josefinSans(
+                                                      textStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal,),
+                                                    ),
+                                                  ),
+                                                )
+
+                                              ],
+                                            );
+                                          }
+                                      ),
+                                      SizedBox(width: 20,)
+
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: 10,),
+
+                              ],
                             ),
                           ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: (){
-
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository, cardPosition: 1,)));
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Chip(
-                                  backgroundColor: Colors.grey[300],
-                                  label: Text("See all",
-                                    style: GoogleFonts.josefinSans(
-                                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Collections",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CollectionsScreen(repository: _repository, prefs: prefs,)));
+                                      },
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+
+                                  ],
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  child: state.topNodes.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                      "No Collections"
+                                    ),
+                                  )
+                                  : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: state.topNodes.length,
+                                        itemBuilder: (context, position){
+                                          return Container(
+                                            margin: EdgeInsets.only(left : 20, bottom: 15),
+                                            child: GestureDetector(
+                                              onTap: (){
+                                                if(state.topNodes[position].isCardNode){
+                                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.topNodes[position].sId, prefs: prefs,)));
+
+                                                } else {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: "?id=" + state.topNodes[position].sId, prefs: prefs,)));
+                                                }
+                                              },
+                                              behavior: HitTestBehavior.translucent,
+                                              child: Container(
+                                                margin: const EdgeInsets.only(top: 10),
+                                                width: 247,
+                                                decoration: new BoxDecoration(
+                                                  color: Colors.purple,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey[350],
+                                                      blurRadius: 8.0, // has the effect of softening the shadow
+                                                      spreadRadius: 3.0, // has the effect of extending the shadow
+                                                      offset: Offset(
+                                                        3.0, // horizontal, move right 10
+                                                        3.0, // vertical, move down 10
+                                                      ),
+                                                    )
+                                                  ],
+                                                  gradient: state.topNodes[position].isCardNode
+                                                      ? new LinearGradient(
+                                                      colors: [Colors.brown, Colors.brown[200]],
+                                                      begin: Alignment.topRight,
+                                                      end: Alignment.topLeft
+                                                  )
+                                                      : new LinearGradient(
+                                                      colors: [Colors.red, Colors.pink],
+                                                      begin: Alignment.topRight,
+                                                      end: Alignment.topLeft
+                                                  ),
+                                                  borderRadius: new BorderRadius.circular(10.0),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: Center(
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(left: 20),
+                                                            child : Text('${state.topNodes[position].title}',
+                                                              style: GoogleFonts.josefinSans(
+                                                                textStyle: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.normal),
+                                                              ),
+                                                            ),
+                                                          )
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 15,),
+                                                    Center(
+                                                      child: Icon(
+                                                        state.topNodes[position].isCardNode ? Icons.book : Icons.collections_bookmark,
+                                                        size: 50,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 30),
+                                                  ],
+
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+
+                                      ),
+                                      SizedBox(width: 20),
+                                    ],
+                                  )
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(width: 20),
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                SizedBox(height: 10,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Bookmarked Cards",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: (){
 
-                        ],
-                      ),
-                      BlocBuilder<DiscoverBloc, DiscoverState>(
-                        builder: (context, state) {
-                          if (state is Failure) {
-                            return new Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: Center(
-                                child: Text('Failed to Fetch Data'),
-                              ),
-                            );
-                          }
-                          if (state is Loaded) {
-                            if (state.revisionCards.isEmpty) {
-                              return new Container(
-                                width: double.infinity,
-                                height: 250,
-                                child: Center(
-                                  child: Text('No Data'),
-                                ),
-                              );
-                            }
-                            return Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: state.revisionCards.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(
-                                          margin: EdgeInsets.only(left: 20, bottom: 15),
-                                          child: GestureDetector(
-                                            onTap: (){
-                                              ///Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository, cardPosition: index + 1)));
-                                            },
-                                            behavior: HitTestBehavior.translucent,
-                                            child: Container(
-                                              height: 200,
-                                              margin: const EdgeInsets.only(top: 10),
-                                              padding: EdgeInsets.all(10),
-                                              width: 124,
-                                              decoration: new BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey[350],
-                                                    blurRadius: 8.0, // has the effect of softening the shadow
-                                                    spreadRadius: 3.0, // has the effect of extending the shadow
-                                                    offset: Offset(
-                                                      3.0, // horizontal, move right 10
-                                                      3.0, // vertical, move down 10
-                                                    ),
-                                                  )
-                                                ],
-                                                borderRadius: new BorderRadius.circular(10.0),                        ),
-                                              child: Text('${state.revisionCards[index].card.content}',
-                                                style: GoogleFonts.josefinSans(
-                                                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
-                                                ),
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BookmarkScreen(repository: _repository, prefs: prefs, cardPosition: 0,)));
+                                      },
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 22),
-                                          child: Text('${state.revisionCards[index].card.parentNode.title}',
-                                            style: GoogleFonts.josefinSans(
-                                              textStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal,),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+
+                                  ],
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 250,
+                                  child: state.bookmarkCards.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                          "No Bookmarked Cards"
+                                    ),
+                                  )
+                                  : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: state.bookmarkCards.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 20, bottom: 15),
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BookmarkScreen(repository: _repository, prefs: prefs, cardPosition: index,)));
+                                                    },
+                                                    behavior: HitTestBehavior.translucent,
+                                                    child: Container(
+                                                      height: 200,
+                                                      margin: const EdgeInsets.only(top: 10),
+                                                      padding: EdgeInsets.all(10),
+                                                      width: 124,
+                                                      decoration: new BoxDecoration(
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey[350],
+                                                            blurRadius: 8.0, // has the effect of softening the shadow
+                                                            spreadRadius: 3.0, // has the effect of extending the shadow
+                                                            offset: Offset(
+                                                              3.0, // horizontal, move right 10
+                                                              3.0, // vertical, move down 10
+                                                            ),
+                                                          )
+                                                        ],
+                                                        borderRadius: new BorderRadius.circular(10.0),                        ),
+                                                      child: Text('${state.bookmarkCards[index].content}',
+                                                        style: GoogleFonts.amaranth(
+                                                          textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 22),
+                                                  child: Text('${state.bookmarkCards[index].parentNode.title}',
+                                                    style: GoogleFonts.josefinSans(
+                                                      textStyle: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal,),
+                                                    ),
+                                                  ),
+                                                )
+
+                                              ],
+                                            );
+                                          }
+                                      ),
+                                      SizedBox(width: 20,)
+                                    ],
+                                  )
+                                ),
+                                SizedBox(height: 20,),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                SizedBox(height: 10,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Recent Card Nodes",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardNodesScreen(repository: _repository, prefs: prefs,)));
+                                      },
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
+                                              ),
                                             ),
                                           ),
-                                        )
 
-                                      ],
-                                    );
-                                  }
-                              ),
-                            );
-                          }
-                          return new Container(
-                            width: double.infinity,
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+
+                                  ],
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 150,
+                                  child: state.cardNodes.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                      "No Recent Card Nodes"
+                                    ),
+                                  )
+                                  : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: state.cardNodes.length,
+                                        itemBuilder: (context, position){
+                                          return Container(
+                                            margin: EdgeInsets.only(left: 20, bottom: 15),
+                                            child: GestureDetector(
+                                              onTap: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[position].sId, prefs: prefs,)));
+
+                                              },
+                                              behavior: HitTestBehavior.translucent,
+                                              child: Container(
+                                                margin: const EdgeInsets.only(top: 10),
+                                                width: 247,
+                                                decoration: new BoxDecoration(
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey[350],
+                                                      blurRadius: 8.0, // has the effect of softening the shadow
+                                                      spreadRadius: 3.0, // has the effect of extending the shadow
+                                                      offset: Offset(
+                                                        3.0, // horizontal, move right 10
+                                                        3.0, // vertical, move down 10
+                                                      ),
+                                                    )
+                                                  ],
+                                                  gradient: new LinearGradient(
+                                                      colors: [Colors.lightBlue, Colors.lightBlue[200]],
+                                                      begin: Alignment.topRight,
+                                                      end: Alignment.topLeft
+                                                  ),
+                                                  borderRadius: new BorderRadius.circular(10.0),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: Center(
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(left: 20),
+                                                            child : Text('${state.cardNodes[position].title}',
+                                                              style: GoogleFonts.josefinSans(
+                                                                textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                                                              ),
+                                                            ),
+                                                          )
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 15,),
+                                                    Center(
+                                                      child: Icon(
+                                                        Icons.book,
+                                                        size: 50,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 30),
+                                                  ],
+
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+
+                                      ),
+                                      SizedBox(width: 20),
+                                    ],
+                                  )
+                                ),
+                              ],
                             ),
-                          );
-                        },
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                SizedBox(height: 10,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Revision Cards",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: (){
+
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AllRevisionCardsScreen(repository: _repository, cardPosition: 0, prefs: prefs,)));
+                                      },
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+
+                                  ],
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 250,
+                                  child: state.revisionCards.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                      "No Revision Cards"
+                                    ),
+                                  )
+                                  : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: state.revisionCards.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 20, bottom: 15),
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AllRevisionCardsScreen(repository: _repository,prefs: prefs, cardPosition: index)));
+                                                    },
+                                                    behavior: HitTestBehavior.translucent,
+                                                    child: Container(
+                                                      height: 200,
+                                                      margin: const EdgeInsets.only(top: 10),
+                                                      padding: EdgeInsets.all(10),
+                                                      width: 124,
+                                                      decoration: new BoxDecoration(
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey[350],
+                                                            blurRadius: 8.0, // has the effect of softening the shadow
+                                                            spreadRadius: 3.0, // has the effect of extending the shadow
+                                                            offset: Offset(
+                                                              3.0, // horizontal, move right 10
+                                                              3.0, // vertical, move down 10
+                                                            ),
+                                                          )
+                                                        ],
+                                                        borderRadius: new BorderRadius.circular(10.0),                        ),
+                                                      child: Text('${state.revisionCards[index].revisionCard.content}',
+                                                        style: GoogleFonts.amaranth(
+                                                          textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 22),
+                                                  child: Text('${state.revisionCards[index].revisionCard.parentNode.title}',
+                                                    style: GoogleFonts.josefinSans(
+                                                      textStyle: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal,),
+                                                    ),
+                                                  ),
+                                                )
+
+                                              ],
+                                            );
+                                          }
+                                      ),
+                                      SizedBox(width: 20),
+                                    ],
+                                  )
+                                ),
+                                SizedBox(height: 20,),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    if(state is Loading){
+                      return new Container(
+                        height: 300,
+                        width: double.infinity,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    return new Container(
+                      height: 300,
+                      width: double.infinity,
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      SizedBox(height: 20,),
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 SizedBox(height: 150,)
               ],
@@ -871,6 +880,17 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
 
       ],
     );
+  }
+
+  _navigateAndAddCard(BuildContext context) async {
+
+    await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddCardScreen(repository: _repository, prefs: prefs,))).then((value){
+      setState(() {
+        _discoverBloc = BlocProvider.of<DiscoverBloc>(context);
+        _discoverBloc.add(Fetch());
+      });
+    });
+
   }
 
   @override

@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rewizzit/data/models/api_response/api-response.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/addNode/addNode-screen.dart';
+import 'package:rewizzit/screens/editNode/editNode-screen.dart';
 import './select-node.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,9 +29,15 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
   Repository get _repository => widget._repository;
   SharedPreferences get prefs => widget.prefs;
   SelectNodeBloc _selectNodeBloc;
+  String parentNodeId;
+  PageController controller = PageController(keepPage: true, viewportFraction: 0.8);
+
+
+  List<CardsNodesData> cardNodes = [new CardsNodesData(isCardNode: true, isInRevision: false, title: "Fetching", sId: "id", userRef: "userRef", createdAt: "createdAt", updatedAt: "updatedAt", iV: 1)];
 
   @override
   void initState() {
+
     super.initState();
   }
 
@@ -49,99 +58,172 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: 20,),
-                    Text("Select Node",
-                      style: GoogleFonts.josefinSans(
-                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      height: 150,
-                      margin: EdgeInsets.only(bottom: 15),
-                      child: GestureDetector(
-                        onTap: (){
-
-
-
-                        },
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          width: 247,
-
-                          decoration: new BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey[350],
-                                blurRadius: 8.0, // has the effect of softening the shadow
-                                spreadRadius: 3.0, // has the effect of extending the shadow
-                                offset: Offset(
-                                  3.0, // horizontal, move right 10
-                                  3.0, // vertical, move down 10
-                                ),
-                              )
-                            ],
-                            gradient: new LinearGradient(
-                                colors: [Colors.green, Colors.lightGreen[200]],
-                                begin: Alignment.topRight,
-                                end: Alignment.topLeft
+                    BlocBuilder<SelectNodeBloc, SelectNodeState>(
+                      builder: (context, state) {
+                        if (state is Failure) {
+                          return Container(
+                            height: 200,
+                            margin: EdgeInsets.only(bottom: 15),
+                            child: Center(
+                              child: Text('failed to fetch data'),
                             ),
-                            borderRadius: new BorderRadius.circular(10.0),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Text("Node\nTitle",
-                                      style: GoogleFonts.josefinSans(
-                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                      ),
-                                    ),
-                                  )
+                          );
+                        }
+                        if (state is Loaded) {
+
+                          if (state.subNodesResponse.curNode == null) {
+                            return Container(
+                              height: 200,
+                              margin: EdgeInsets.only(bottom: 15),
+                              child: Center(
+                                child: Text('No Node'),
                               ),
-                              Spacer(),
-                              Center(
-                                child: Icon(
-                                  Icons.adjust,
-                                  size: 50,
-                                  color: Colors.white,
+                            );
+                          }
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 150,
+                                margin: EdgeInsets.only(bottom: 15),
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  width: 250,
+
+                                  decoration: new BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[350],
+                                        blurRadius: 8.0, // has the effect of softening the shadow
+                                        spreadRadius: 3.0, // has the effect of extending the shadow
+                                        offset: Offset(
+                                          3.0, // horizontal, move right 10
+                                          3.0, // vertical, move down 10
+                                        ),
+                                      )
+                                    ],
+                                    gradient: new LinearGradient(
+                                        colors: [Colors.red, Colors.pink],
+                                        begin: Alignment.topRight,
+                                        end: Alignment.topLeft
+                                    ),
+                                    borderRadius: new BorderRadius.circular(10.0),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 20),
+                                              child: Text('${state.subNodesResponse.curNode.title}',
+                                                style: GoogleFonts.josefinSans(
+                                                  textStyle: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.normal),
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      SizedBox(width: 15,),
+                                      Center(
+                                        child: Icon(
+                                          Icons.album,
+                                          size: 50,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(width: 30),
+                                    ],
+
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: 30),
+                              SizedBox(height: 20,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      size: 30,
+                                        color: state.subNodesResponse.curNode.title == "All Nodes"
+                                            ? Colors.grey[200]
+                                            : Colors.grey
+                                    ),
+                                    onPressed: state.subNodesResponse.curNode.title == "All Nodes"
+                                        ? null
+                                        : (){
+                                    },
+                                  ),
+                                  SizedBox(width: 25,),
+
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      size: 30,
+                                        color: state.subNodesResponse.curNode.title == "All Nodes"
+                                            ? Colors.grey[200]
+                                            : Colors.grey
+                                    ),
+                                    onPressed: state.subNodesResponse.curNode.title == "All Nodes"
+                                        ? null
+                                        : (){
+
+                                      _navigateAndEditNode(context, parentNodeId, state.subNodesResponse.curNode.title);
+                                    },
+                                  ),
+                                  SizedBox(width: 25,),
+                                  IconButton(
+                                    icon: Icon(
+                                        Icons.arrow_upward,
+                                        size: 30,
+                                        color: state.subNodesResponse.curNode.title == "All Nodes"
+                                            ? Colors.grey[200]
+                                            : Colors.grey
+                                    ),
+                                    onPressed: state.subNodesResponse.curNode.title == "All Nodes"
+                                        ? null
+                                        : (){
+
+                                      _selectNodeBloc = BlocProvider.of<SelectNodeBloc>(context);
+
+                                      if(state.subNodesResponse.curNode.parent.title ==  null){
+                                        _selectNodeBloc.add(FetchSubNodes(parentNodeId: ""));
+                                        setState(() {});
+                                      } else {
+                                        _selectNodeBloc.add(FetchSubNodes(parentNodeId: "?id=" + state.subNodesResponse.curNode.parent.sId));
+                                        setState(() {});
+                                      }
+                                    },
+                                  ),
+
+
+                                ],
+                              ),
                             ],
-
+                          );
+                        }
+                        if(state is NodesLoading){
+                          return Container(
+                            height: 200,
+                            margin: EdgeInsets.only(bottom: 15),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        return Container(
+                          height: 200,
+                          margin: EdgeInsets.only(bottom: 15),
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                    SizedBox(height: 20,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(
-                          Icons.delete,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: 25,),
-                        Icon(
-                          Icons.edit,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: 25,),
-                        Icon(
-                          Icons.arrow_upward,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
 
-                      ],
-                    ),
 
 
                   ],
@@ -153,45 +235,50 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                     builder: (context, state) {
                       if (state is Failure) {
                         return Center(
-                          child: Text('Failed to fetch Data'),
+                          child: Text('failed to fetch posts'),
                         );
                       }
                       if (state is Loaded) {
-                        if (state.nodes.isEmpty) {
+
+                        parentNodeId = state.subNodesResponse.curNode.sId;
+
+                        cardNodes = state.cardNodes;
+
+                        if (state.subNodesResponse.data.nodes.isEmpty) {
                           return Center(
-                            child: Text('No Data'),
+                            child: Text('No Nodes'),
                           );
                         }
                         return ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: state.nodes.length,
+                          itemCount: state.subNodesResponse.data.nodes.length,
                           itemBuilder: (context, i) => Container(
                             margin: EdgeInsets.only(left: 15, bottom: 15),
                             child: GestureDetector(
                               onTap: (){
 
-                                if(state.nodes[i].isCardNode){
+                                if(state.subNodesResponse.data.nodes[i].isCardNode){
 
-                                  prefs.setString("parentNodeId", state.nodes[i].sId);
-                                  Navigator.pop(context, state.nodes[i].title);
+                                  prefs.setString("parentNodeId", state.subNodesResponse.data.nodes[i].sId);
+                                  Navigator.pop(context, state.subNodesResponse.data.nodes[i].title);
 
                                 } else {
 
-                                  _selectNodeBloc= BlocProvider.of<SelectNodeBloc>(context);
-                                  _selectNodeBloc.add(Fetch(parentNodeId: state.nodes[i].sId));
+                                  _selectNodeBloc = BlocProvider.of<SelectNodeBloc>(context);
+                                  _selectNodeBloc.add(FetchSubNodes(parentNodeId: "?id=" + state.subNodesResponse.data.nodes[i].sId));
                                   setState(() {
 
                                   });
 
                                 }
+
                               },
                               behavior: HitTestBehavior.translucent,
                               child: Container(
-                                margin: const EdgeInsets.only(top: 10),
+                                padding: EdgeInsets.all(10),
                                 width: 200,
 
                                 decoration: new BoxDecoration(
-                                  color: Colors.purple,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey[350],
@@ -203,12 +290,12 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                                       ),
                                     )
                                   ],
-                                  gradient: state.nodes[i].isCardNode
+                                  gradient: state.subNodesResponse.data.nodes[i].isCardNode
                                       ? new LinearGradient(
-                                          colors: [Colors.brown, Colors.brown[200]],
-                                          begin: Alignment.topRight,
-                                          end: Alignment.topLeft
-                                      )
+                                      colors: [Colors.lightBlue, Colors.lightBlue[200]],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.topLeft
+                                  )
                                       : new LinearGradient(
                                       colors: [Colors.green, Colors.lightGreen[200]],
                                       begin: Alignment.topRight,
@@ -223,22 +310,21 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                                     Expanded(
                                       child: Center(
                                           child: Padding(
-                                              padding: EdgeInsets.only(left: 20),
-                                              child: Container(
-                                                width: 80,
-                                                child: Text('${state.nodes[i].title}',
-                                                  style: GoogleFonts.josefinSans(
-                                                    textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
-                                                  ),
+                                            padding: EdgeInsets.only(left: 20),
+                                            child: Container(
+                                              child: Text('${state.subNodesResponse.data.nodes[i].title}',
+                                                style: GoogleFonts.josefinSans(
+                                                  textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
                                                 ),
-                                              )
+                                              ),
+                                            ),
                                           )
                                       ),
                                     ),
                                     SizedBox(width: 15,),
                                     Center(
                                       child: Icon(
-                                        state.nodes[i].isCardNode ? Icons.book : Icons.adjust,
+                                        state.subNodesResponse.data.nodes[i].isCardNode ? Icons.book : Icons.adjust,
                                         size: 30,
                                         color: Colors.white,
                                       ),
@@ -250,7 +336,13 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                               ),
                             ),
                           ),
+                          controller: controller,
 
+                        );
+                      }
+                      if(state is NodesLoading || state is Loading){
+                        return Center(
+                          child: CircularProgressIndicator(),
                         );
                       }
                       return Center(
@@ -282,7 +374,7 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                         );
                       }
                       if (state is Loaded) {
-                        if (state.nodes.isEmpty) {
+                        if (state.cardNodes.isEmpty) {
                           return Center(
                             child: Text('No Card Nodes'),
                           );
@@ -318,7 +410,7 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
                                     )
                                   ],
                                   gradient:new LinearGradient(
-                                      colors: [Colors.brown, Colors.brown[200]],
+                                      colors: [Colors.lightBlue, Colors.lightBlue[200]],
                                       begin: Alignment.topRight,
                                       end: Alignment.topLeft
                                   ),
@@ -360,28 +452,136 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
 
                         );
                       }
-                      return Center(
-                        child: CircularProgressIndicator(),
+
+                      if (state is Loading) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: cardNodes.length,
+                        itemBuilder: (context, i) => Container(
+                          margin: EdgeInsets.only(left: 15, bottom: 15),
+                          child: GestureDetector(
+                            onTap: (){
+
+                              prefs.setString("parentNodeId", cardNodes[i].sId);
+                              Navigator.pop(context, cardNodes[i].title);
+
+                            },
+                            behavior: HitTestBehavior.translucent,
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              width: 200,
+
+                              decoration: new BoxDecoration(
+                                color: Colors.purple,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[350],
+                                    blurRadius: 8.0, // has the effect of softening the shadow
+                                    spreadRadius: 3.0, // has the effect of extending the shadow
+                                    offset: Offset(
+                                      3.0, // horizontal, move right 10
+                                      3.0, // vertical, move down 10
+                                    ),
+                                  )
+                                ],
+                                gradient:new LinearGradient(
+                                    colors: [Colors.lightBlue, Colors.lightBlue[200]],
+                                    begin: Alignment.topRight,
+                                    end: Alignment.topLeft
+                                ),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Center(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                            child: Container(
+                                              child: Text('${cardNodes[i].title}',
+                                                style: GoogleFonts.josefinSans(
+                                                  textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                                                ),
+                                              ),
+                                            )
+                                        )
+                                    ),
+                                  ),
+                                  SizedBox(width: 15,),
+                                  Center(
+                                    child: Icon(
+                                      Icons.book,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 30),
+                                ],
+
+                              ),
+                            ),
+                          ),
+                        ),
+
                       );
                     },
                   ),
                 ),
-                SizedBox(height: 60,)
+                SizedBox(height: 20,),
+                Container(
+                  margin: EdgeInsets.only(left: 100, right: 100, bottom: 50),
+                  child: RaisedButton(
+                    color: Colors.deepPurple,
+                    onPressed: () {
+
+                      _navigateAndAddNode(context, parentNodeId);
+
+                    },
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.add_circle_outline,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text("Add Node",
+                              style: GoogleFonts.josefinSans(
+                                textStyle: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
+          Padding(
               padding: EdgeInsets.only(left: 20, top: 30),
-              child: Icon(
-                  Icons.close
-              ),
-            ),
-          )
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                    Icons.close
+                ),
+              )
+          ),
         ],
       ),
     );
@@ -391,6 +591,33 @@ class _SelectNodePageState extends State<SelectNodePage> with SingleTickerProvid
   void dispose() {
     super.dispose();
   }
+
+  _navigateAndAddNode(BuildContext context, String parentNodeId) async {
+
+    await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddNodeScreen(repository: _repository, prefs: prefs, parentNodeId: parentNodeId,))).then((value){
+      setState(() {
+        _selectNodeBloc = BlocProvider.of<SelectNodeBloc>(context);
+        if(parentNodeId == null){
+          _selectNodeBloc.add(FetchSubNodes(parentNodeId: ""));
+        } else {
+          _selectNodeBloc.add(FetchSubNodes(parentNodeId: "?id=" + parentNodeId));
+        }
+      });
+    });
+
+  }
+
+  _navigateAndEditNode(BuildContext context, String parentNodeId, String parentNodeTitle) async {
+
+    await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditNodeScreen(repository: _repository, prefs: prefs, parentNodeTitle: parentNodeTitle, parentNodeId: parentNodeId))).then((value){
+      setState(() {
+        _selectNodeBloc = BlocProvider.of<SelectNodeBloc>(context);
+        _selectNodeBloc.add(FetchSubNodes(parentNodeId: "?id=" + parentNodeId));
+      });
+    });
+
+  }
+
 
 }
 

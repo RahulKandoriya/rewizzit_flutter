@@ -8,7 +8,3 @@ abstract class DiscoverEvent extends Equatable {
 }
 
 class Fetch extends DiscoverEvent {}
-class FetchBookmark extends DiscoverEvent {}
-class FetchTopNodes extends DiscoverEvent {}
-class FetchCardNodes extends DiscoverEvent {}
-class FetchRevisionCards extends DiscoverEvent {}

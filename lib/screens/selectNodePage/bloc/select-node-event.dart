@@ -8,11 +8,11 @@ abstract class SelectNodeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Fetch extends SelectNodeEvent {
+class FetchSubNodes extends SelectNodeEvent {
 
   final String parentNodeId;
 
-  const Fetch({@required this.parentNodeId});
+  const FetchSubNodes({@required this.parentNodeId});
 
   @override
   List<Object> get props => [parentNodeId];
@@ -21,3 +21,5 @@ class Fetch extends SelectNodeEvent {
   String toString() => 'Delete { id: $parentNodeId }';
 
 }
+class FetchCardNodes extends SelectNodeEvent {}
+

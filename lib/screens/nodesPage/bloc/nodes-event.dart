@@ -21,3 +21,15 @@ class Fetch extends NodesEvent {
   String toString() => 'Delete { id: $parentNodeId }';
 
 }
+
+class Delete extends NodesEvent {
+  final String nodeId;
+
+  const Delete({@required this.nodeId});
+
+  @override
+  List<Object> get props => [nodeId];
+
+  @override
+  String toString() => 'Delete { item: $nodeId }';
+}

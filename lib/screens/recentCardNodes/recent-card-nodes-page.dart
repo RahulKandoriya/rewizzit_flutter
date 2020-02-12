@@ -10,8 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RecentCardNodesPage extends StatefulWidget {
 
   final Repository _repository;
+  final SharedPreferences prefs;
 
-  RecentCardNodesPage({Key key, @required Repository repository})
+  RecentCardNodesPage({Key key, @required Repository repository, @required this.prefs})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -23,17 +24,15 @@ class RecentCardNodesPage extends StatefulWidget {
 class _RecentCardNodesPageState extends State<RecentCardNodesPage> with SingleTickerProviderStateMixin {
 
   Repository get _repository => widget._repository;
+  SharedPreferences get prefs => widget.prefs;
 
   var currentPageValue = 0.0;
-  bool isAppBarUp;
 
   @override
   void initState() {
     super.initState();
   }
 
-
-  SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class _RecentCardNodesPageState extends State<RecentCardNodesPage> with SingleTi
           Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.grey[200],
-              title: Text("Recent Card Nodes",
+              title: Text("Card Nodes",
                 style: GoogleFonts.josefinSans(
                   textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
@@ -66,69 +65,75 @@ class _RecentCardNodesPageState extends State<RecentCardNodesPage> with SingleTi
                   }
                   return Container(
                     margin: EdgeInsets.only(left: 10, right: 10),
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: state.cardNodes.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            onTap: (){
+                    child: ListView(
+                      children: <Widget>[
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemCount: state.cardNodes.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: (){
 
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[index].sId,)));
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 10,),
-                              height: 150,
-                              width: double.infinity,
-                              decoration: new BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey[350],
-                                    blurRadius: 8.0, // has the effect of softening the shadow
-                                    spreadRadius: 3.0, // has the effect of extending the shadow
-                                    offset: Offset(
-                                      3.0, // horizontal, move right 10
-                                      3.0, // vertical, move down 10
-                                    ),
-                                  )
-                                ],
-                                gradient: new LinearGradient(
-                                    colors: [Colors.brown, Colors.brown[200]],
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft
-                                ),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 20),
-                                        child: Text('${state.cardNodes[index].title}',
-                                          style: GoogleFonts.josefinSans(
-                                            textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                          ),
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[index].sId, prefs: prefs,)));
+                                },
+                                behavior: HitTestBehavior.translucent,
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 10,),
+                                  height: 150,
+                                  width: double.infinity,
+                                  decoration: new BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[350],
+                                        blurRadius: 8.0, // has the effect of softening the shadow
+                                        spreadRadius: 3.0, // has the effect of extending the shadow
+                                        offset: Offset(
+                                          3.0, // horizontal, move right 10
+                                          3.0, // vertical, move down 10
                                         ),
                                       )
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Icon(
-                                      Icons.book,
-                                      size: 50,
-                                      color: Colors.white,
+                                    ],
+                                    gradient: new LinearGradient(
+                                        colors: [Colors.lightBlue, Colors.lightBlue[200]],
+                                        begin: Alignment.topRight,
+                                        end: Alignment.topLeft
                                     ),
+                                    borderRadius: new BorderRadius.circular(10.0),
                                   ),
-                                  SizedBox(width: 30),
-                                ],
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                            child: Text('${state.cardNodes[index].title}',
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                                              ),
+                                            ),
+                                          )
+                                      ),
+                                      Spacer(),
+                                      Center(
+                                        child: Icon(
+                                          Icons.book,
+                                          size: 50,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(width: 30),
+                                    ],
 
-                              ),
-                            ),
-                          );
-                        }),
+                                  ),
+                                ),
+                              );
+                            }),
+                        SizedBox(height: 100,)
+                      ],
+                    ),
 
                   );
                 }

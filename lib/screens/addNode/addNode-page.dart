@@ -4,13 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/services/repository.dart';
 import 'package:rewizzit/screens/addNode/addNode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddNodePage extends StatefulWidget {
 
   final Repository _repository;
+  final SharedPreferences prefs;
+  final String parentNodeId;
 
 
-  AddNodePage({Key key, @required Repository repository})
+  AddNodePage({Key key, @required Repository repository, @required this.prefs, @required this.parentNodeId})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -23,6 +26,8 @@ class _AddNodePageState extends State<AddNodePage> with SingleTickerProviderStat
 
 
   Repository get _repository => widget._repository;
+  SharedPreferences get prefs => widget.prefs;
+  String get parentNodeId => widget.parentNodeId;
 
   final TextEditingController _titleController = TextEditingController();
 
@@ -239,18 +244,17 @@ class _AddNodePageState extends State<AddNodePage> with SingleTickerProviderStat
                   ],
                 ),
               ),
-              GestureDetector(
-                onTap: (){
-                  Navigator.pop(context);
-                },
-                behavior: HitTestBehavior.translucent,
-                child: Padding(
+              Padding(
                   padding: EdgeInsets.only(left: 20, top: 30),
-                  child: Icon(
-                      Icons.close
-                  ),
-                ),
-              )
+                  child: IconButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                        Icons.close
+                    ),
+                  )
+              ),
             ],
           ),
         )
@@ -273,7 +277,7 @@ class _AddNodePageState extends State<AddNodePage> with SingleTickerProviderStat
       SubmitPressed(
         title: _titleController.text,
         isCardNode: isCardNode,
-        parentNodeId: "5e16f2fb8cc29a2feb748391",
+        parentNodeId: parentNodeId,
       ),
     );
   }

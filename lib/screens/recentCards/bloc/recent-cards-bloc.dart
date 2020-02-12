@@ -36,8 +36,8 @@ class RecentCardsBloc extends Bloc<RecentCardsEvent, RecentCardsState> {
       ) async* {
     if (event is Fetch) {
       try {
-        final bookmarkCards = await _repository.fetchBookmarkCards();
-        yield Loaded(bookmarkCards: bookmarkCards);
+        final recentCards = await _repository.fetchRecentCards();
+        yield Loaded(recentCards: recentCards);
       } catch (_) {
         yield Failure();
       }

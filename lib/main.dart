@@ -1,4 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
@@ -51,26 +53,26 @@ class App extends StatelessWidget {
     }
     sharedPreference();
 
+    FirebaseAnalytics analytics = FirebaseAnalytics();
 
-    return BotToastInit(
 
-      child: MaterialApp(
-        navigatorObservers: [BotToastNavigatorObserver()],
-        debugShowCheckedModeBanner: false,
-        theme: appTheme(),
-        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
 
-            if (state is Unauthenticated) {
-              return LoginScreen(repository: _repository);
-            }
-            if (state is Authenticated) {
-              ///return RevisionScreen(repository: _repository, preferences: prefs);
-              return HomeScreen(preferences: prefs);
-            }
-            return SplashScreen();
-          },
-        ),
+    return MaterialApp(
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics),],
+      debugShowCheckedModeBanner: false,
+      theme: appTheme(),
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+
+
+          if (state is Unauthenticated) {
+            return LoginScreen(repository: _repository);
+          }
+          if (state is Authenticated) {
+            return HomeScreen(preferences: prefs, observer: FirebaseAnalyticsObserver(analytics: analytics),);
+          }
+          return SplashScreen();
+        },
       ),
     );
   }

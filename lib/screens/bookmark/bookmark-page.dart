@@ -10,8 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BookmarkPage extends StatefulWidget {
 
   final Repository _repository;
+  final SharedPreferences prefs;
+  final int cardPosition;
 
-  BookmarkPage({Key key, @required Repository repository})
+  BookmarkPage({Key key, @required Repository repository, @required this.prefs, @required this.cardPosition})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -23,23 +25,27 @@ class BookmarkPage extends StatefulWidget {
 class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderStateMixin {
 
 
-  PageController controller = PageController(keepPage: true, viewportFraction: 0.8);
+  SharedPreferences get prefs => widget.prefs;
+  int get cardPosition => widget.cardPosition;
+
+  PageController controller;
   var currentPageValue = 0.0;
-  bool isAppBarUp;
-  double _lowerValue = 0;
-  double _upperValue = 0;
   double _currentIndex = 0;
+
+  BookmarkBloc _bookmarkBloc;
 
   @override
   void initState() {
     super.initState();
+    controller = PageController( initialPage: cardPosition,keepPage: true, viewportFraction: 0.8);
   }
 
 
-  SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
+
+    _bookmarkBloc = BlocProvider.of<BookmarkBloc>(context);
 
     return SafeArea(
       child: Stack(
@@ -52,21 +58,22 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: 20,),
-                    Text("Cards",
+                    Text("Bookmarked",
                       style: GoogleFonts.josefinSans(
                         textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 10,),
-                    Text("Bookmark",
+                    Text("Cards",
                       style: GoogleFonts.josefinSans(
                         textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
                       ),
                     ),
+                    SizedBox(height: 30,),
                   ],
                 ),
                 Container(
-                  height: 500,
+                  height: 450,
                   width: double.infinity,
                   child: BlocBuilder<BookmarkBloc, BookmarkState>(
                     builder: (context, state) {
@@ -83,7 +90,7 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                         }
                         return PageView.builder(
                           itemCount: state.bookmarkCards.length,
-                          itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[i],),
+                          itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[i], prefs: prefs, bookmarkBloc: _bookmarkBloc,),
                           controller: controller,
 
                         );
@@ -97,7 +104,7 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(height: 10,),
+                    SizedBox(height: 50,),
                     Text("Bookmarked Cards Appear Here",
                       style: GoogleFonts.josefinSans(
                         textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
@@ -109,18 +116,17 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
               ],
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
+          Padding(
               padding: EdgeInsets.only(left: 20, top: 30),
-              child: Icon(
-                  Icons.close
-              ),
-            ),
-          )
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                    Icons.close
+                ),
+              )
+          ),
         ],
       ),
     );

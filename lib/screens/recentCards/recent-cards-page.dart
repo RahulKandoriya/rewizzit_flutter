@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/services/repository.dart';
+import 'package:rewizzit/screens/components/recent_card_model_widget/recent-card-model-widget.dart';
 import 'package:rewizzit/screens/recentCards/bloc/bloc.dart';
 import 'package:rewizzit/screens/recentCards/recent-cards.dart';
-import 'package:rewizzit/screens/components/card_model_widget/card-model-widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RecentCardsPage extends StatefulWidget {
 
   final Repository _repository;
+  final SharedPreferences prefs;
+  final int cardPosition;
 
-  RecentCardsPage({Key key, @required Repository repository})
+  RecentCardsPage({Key key, @required Repository repository, @required this.prefs, @required this.cardPosition})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -24,24 +25,25 @@ class RecentCardsPage extends StatefulWidget {
 
 class _RecentCardsPageState extends State<RecentCardsPage> with SingleTickerProviderStateMixin {
 
-
-  PageController controller = PageController(keepPage: true, viewportFraction: 0.8);
+  SharedPreferences get prefs => widget.prefs;
+  int get cardPosition => widget.cardPosition;
+  PageController controller;
   var currentPageValue = 0.0;
-  bool isAppBarUp;
-  double _lowerValue = 0;
-  double _upperValue = 0;
+
+  RecentCardsBloc _recentCardsBloc;
 
 
   @override
   void initState() {
+    controller = PageController(initialPage: cardPosition, viewportFraction: .8, keepPage: true);
     super.initState();
   }
 
 
-  SharedPreferences prefs;
-
   @override
   Widget build(BuildContext context) {
+
+    _recentCardsBloc = BlocProvider.of<RecentCardsBloc>(context);
 
     return SafeArea(
       child: Stack(
@@ -78,14 +80,14 @@ class _RecentCardsPageState extends State<RecentCardsPage> with SingleTickerProv
                         );
                       }
                       if (state is Loaded) {
-                        if (state.bookmarkCards.isEmpty) {
+                        if (state.recentCards.isEmpty) {
                           return Center(
                             child: Text('no posts'),
                           );
                         }
                         return PageView.builder(
-                          itemCount: 10,
-                          itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[0],),
+                          itemCount: state.recentCards.length,
+                          itemBuilder: (context, i) => RecentCardModelWidget(cardModel: state.recentCards[i], prefs: prefs, recentCardsBloc: _recentCardsBloc,),
                           controller: controller,
                         );
                       }
@@ -110,18 +112,17 @@ class _RecentCardsPageState extends State<RecentCardsPage> with SingleTickerProv
               ],
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
+          Padding(
               padding: EdgeInsets.only(left: 20, top: 30),
-              child: Icon(
-                  Icons.close
-              ),
-            ),
-          )
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                    Icons.close
+                ),
+              )
+          ),
         ],
       ),
     );
