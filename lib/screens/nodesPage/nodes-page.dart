@@ -248,7 +248,7 @@ class _NodesPageState extends State<NodesPage> with SingleTickerProviderStateMix
                               onTap: (){
 
                                 if(state.subNodesResponse.data.nodes[i].isCardNode){
-                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, prefs: prefs,parentNodeId: state.subNodesResponse.data.nodes[i].sId)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, prefs: prefs,parentNodeId: state.subNodesResponse.data.nodes[i].sId, isFromNodePage: true,)));
                                 } else {
 
                                   _nodesBloc = BlocProvider.of<NodesBloc>(context);

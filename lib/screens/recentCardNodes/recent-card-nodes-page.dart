@@ -76,7 +76,7 @@ class _RecentCardNodesPageState extends State<RecentCardNodesPage> with SingleTi
                               return GestureDetector(
                                 onTap: (){
 
-                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[index].sId, prefs: prefs,)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[index].sId, prefs: prefs, isFromNodePage: false,)));
                                 },
                                 behavior: HitTestBehavior.translucent,
                                 child: Container(

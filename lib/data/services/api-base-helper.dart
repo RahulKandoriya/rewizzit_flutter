@@ -72,7 +72,7 @@ class ApiBaseHelper {
         },
         onError: (DioError e) async {
           // Do something with response error
-          return  e;//continue
+          return  e; //continue
         }
     ));
     try {
@@ -120,7 +120,6 @@ class ApiBaseHelper {
   }
 
 }
-
 
 dynamic _returnResponse(http.Response response) {
   switch (response.statusCode) {

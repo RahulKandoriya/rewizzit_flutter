@@ -15,8 +15,9 @@ class NodeCardsPage extends StatefulWidget {
   final Repository _repository;
   final String parentNodeId;
   final SharedPreferences prefs;
+  final bool isFromNodePage;
 
-  NodeCardsPage({Key key, @required Repository repository, @required this.parentNodeId, @required this.prefs})
+  NodeCardsPage({Key key, @required Repository repository, @required this.parentNodeId, @required this.prefs, @required this.isFromNodePage})
       : assert(repository != null),
         _repository = repository, super(key: key);
 
@@ -30,14 +31,16 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
 
   Repository get _repository => widget._repository;
   SharedPreferences get prefs => widget.prefs;
+  bool get isFromNodePage => widget.isFromNodePage;
   String navigateUpNodeId;
 
-  PageController controller = PageController(keepPage: true, viewportFraction: 0.8);
+  PageController controller = PageController(initialPage: 0, keepPage: true, viewportFraction: 0.8);
   var currentPageValue = 0.0;
   bool isAppBarUp;
   double _lowerValue = 0;
   String currentNodeTitle;
   String currentNodeId;
+  double currentPage;
 
   NodeCardsBloc _nodeCardsBloc;
 
@@ -186,24 +189,24 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Visibility(
-                        visible: false,
+                        visible: true,
                         child: BlocBuilder<NodeCardsBloc, NodeCardsState>(
                           builder: (context, state) {
                             if (state is Failure) {
                               return Center(
-                                child: Text('failed to fetch posts'),
+                                child: Text('failed to fetch'),
                               );
                             }
                             if (state is Loaded) {
                               if (state.nodeCardsResponse.data.cards.isEmpty) {
                                 return Center(
-                                  child: Text('no posts'),
+                                  child: Text('No data'),
                                 );
                               }
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text("Select Card (${_lowerValue.floor()}/${state.nodeCardsResponse.data.cards.length})",
+                                  Text("Select Card (${ (currentPageValue + 1).floor()}/${state.nodeCardsResponse.data.cards.length})",
                                     style: GoogleFonts.josefinSans(
                                       textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
                                     ),
@@ -212,18 +215,15 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                                     margin: EdgeInsets.only(left: 40, right: 40,),
                                     child: Slider(
                                       activeColor: Colors.indigoAccent,
-                                      min: 1.0,
-                                      max: state.nodeCardsResponse.data.cards.length.toDouble(),
+                                      min: 0,
+                                      max: state.nodeCardsResponse.data.cards.length.toDouble() - 1,
                                       onChanged: (currentValue) {
                                         setState(() {
-
-                                          print(currentValue);
-                                          currentPageValue = currentValue;
-                                          controller.animateToPage(currentValue.floor(), duration: Duration(milliseconds: 300), curve: Curves.linear);
+                                          controller.animateToPage(currentValue.floor(), duration: Duration(milliseconds: 200), curve: Curves.linear);
 
                                         });
                                       },
-                                      value: 1.0,
+                                      value: currentPageValue,
                                     ),
                                   ),
                                 ],
@@ -235,7 +235,6 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
                       Container(
                         margin: EdgeInsets.only(left: 100, right: 100),
                         child: RaisedButton(
@@ -268,7 +267,7 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                           ),
                         ),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(height: 10,),
                     ],
                   ),
                 ],
@@ -292,9 +291,15 @@ class _NodeCardsPageState extends State<NodeCardsPage> with SingleTickerProvider
                 padding: EdgeInsets.only(right: 20, top: 30),
                 child: IconButton(
                   onPressed: (){
-                    if(navigateUpNodeId != null){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: "?id=" + navigateUpNodeId, prefs: prefs,)));
+
+                    if(isFromNodePage){
+                      Navigator.pop(context);
+                    } else {
+                      if(navigateUpNodeId != null){
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: "?id=" + navigateUpNodeId, prefs: prefs,)));
+                      }
                     }
+
                   },
                   icon: Icon(
                     Icons.arrow_upward,

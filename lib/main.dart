@@ -71,6 +71,8 @@ class App extends StatelessWidget {
           if (state is Authenticated) {
             return HomeScreen(preferences: prefs, observer: FirebaseAnalyticsObserver(analytics: analytics),);
           }
+          if (state is Uninitialized) {
+            return SplashScreen();          }
           return SplashScreen();
         },
       ),

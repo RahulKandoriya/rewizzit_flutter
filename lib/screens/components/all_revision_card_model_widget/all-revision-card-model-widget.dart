@@ -91,8 +91,24 @@ class _AllRevisionCardModelWidgetState extends State<AllRevisionCardModelWidget>
                               SizedBox(height: 10,),
                               Text(widget.revisionCard.card.content,
                                 style: GoogleFonts.amaranth(
-                                  textStyle: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.normal),
+                                  textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                                 ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      size: 25,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      _navigateAndEditCard(context);
+                                    },
+                                  ),
+                                ],
                               ),
                               SizedBox(height: 20,),
                             ],
@@ -104,35 +120,39 @@ class _AllRevisionCardModelWidgetState extends State<AllRevisionCardModelWidget>
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.revisionCard.card.parentNode.sId, prefs: prefs,)));
-                              },
-                              child: Chip(
-                                backgroundColor: Colors.green,
-                                label: Text(widget.revisionCard.card.parentNode.title,
-                                  style: TextStyle(fontSize: 15.0, color: Colors.white),
+                        Container(
+                          width: 300,
+                          height: 50,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.revisionCard.card.parentNode.sId, prefs: prefs, isFromNodePage: false,)));
+                                },
+                                child: Chip(
+                                  backgroundColor: Colors.green,
+                                  label: Text(widget.revisionCard.card.parentNode.title,
+                                    style: TextStyle(fontSize: 15.0, color: Colors.white),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Spacer(),
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                size: 25,
-                                color: Colors.grey,
+                              SizedBox(width: 8,),
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.revisionCard.card.parentNode.sId, prefs: prefs, isFromNodePage: false,)));
+                                },
+                                child: Chip(
+                                  backgroundColor: Colors.blue,
+                                  label: Text("Indian History",
+                                    style: TextStyle(fontSize: 15.0, color: Colors.white),
+                                  ),
+                                ),
                               ),
-                              onPressed: () {
-
-                                _showDialog();
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,13 +229,13 @@ class _AllRevisionCardModelWidgetState extends State<AllRevisionCardModelWidget>
                             ),
                             IconButton(
                               icon: Icon(
-                                Icons.edit,
+                                Icons.delete,
                                 size: 25,
                                 color: Colors.grey,
                               ),
                               onPressed: () {
 
-                                _navigateAndEditCard(context);
+                                _showDialog();
 
                               },
                             ),

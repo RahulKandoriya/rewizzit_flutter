@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quill_delta/quill_delta.dart';
 import 'package:rewizzit/data/services/repository.dart';
 import 'package:rewizzit/screens/addCard/addCard.dart';
 import 'package:rewizzit/screens/selectNodePage/select-node-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zefyr/zefyr.dart';
 
 class AddCardPage extends StatefulWidget {
 
@@ -179,12 +177,12 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
                                             minLines: 8,
                                             maxLines: 10,
                                             style: GoogleFonts.amaranth(
-                                              textStyle: TextStyle(fontSize: 20, color: Colors.black54, fontWeight: FontWeight.normal),
+                                              textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                                             ),
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: "Enter Details",
-                                              hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
+                                              hintStyle: TextStyle(fontSize: 18.0, color: Colors.grey[300]),
 
 
                                             ),

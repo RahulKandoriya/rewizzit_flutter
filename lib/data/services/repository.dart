@@ -78,8 +78,8 @@ class Repository {
     return await _apiProvider.addCardToRevision(cardId);
   }
 
-  Future<String> updateCardToRevision(String revi_id) async {
-    return await _apiProvider.updateCardToRevision(revi_id);
+  Future<String> updateCardToRevision(String reviId) async {
+    return await _apiProvider.updateCardToRevision(reviId);
   }
 
   Future<String> deleteCard(String cardId) async {

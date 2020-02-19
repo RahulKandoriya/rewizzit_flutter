@@ -83,8 +83,24 @@ class _RecentCardModelWidgetState extends State<RecentCardModelWidget> with Sing
                           SizedBox(height: 10,),
                           Text(widget.cardModel.content,
                             style: GoogleFonts.amaranth(
-                              textStyle: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.normal),
+                              textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                             ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  size: 25,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  _navigateAndEditCard(context);
+                                },
+                              ),
+                            ],
                           ),
                           SizedBox(height: 20,),
                         ],
@@ -96,35 +112,39 @@ class _RecentCardModelWidgetState extends State<RecentCardModelWidget> with Sing
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.cardModel.parentNode.sId, prefs: prefs,)));
-                          },
-                          child: Chip(
-                            backgroundColor: Colors.green,
-                            label: Text(widget.cardModel.parentNode.title,
-                              style: TextStyle(fontSize: 15.0, color: Colors.white),
+                    Container(
+                      width: 300,
+                      height: 50,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.cardModel.parentNode.sId, prefs: prefs, isFromNodePage: false,)));
+                            },
+                            child: Chip(
+                              backgroundColor: Colors.green,
+                              label: Text(widget.cardModel.parentNode.title,
+                                style: TextStyle(fontSize: 15.0, color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                        Spacer(),
-                        IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            size: 25,
-                            color: Colors.grey,
+                          SizedBox(width: 8,),
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: widget.cardModel.parentNode.sId, prefs: prefs, isFromNodePage: false,)));
+                            },
+                            child: Chip(
+                              backgroundColor: Colors.blue,
+                              label: Text("Indian History",
+                                style: TextStyle(fontSize: 15.0, color: Colors.white),
+                              ),
+                            ),
                           ),
-                          onPressed: () {
-
-                            _showDialog();
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -203,12 +223,13 @@ class _RecentCardModelWidgetState extends State<RecentCardModelWidget> with Sing
                         ),
                         IconButton(
                           icon: Icon(
-                            Icons.edit,
+                            Icons.delete,
                             size: 25,
                             color: Colors.grey,
                           ),
                           onPressed: () {
-                            _navigateAndEditCard(context);
+                            _showDialog();
+
 
                           },
                         ),

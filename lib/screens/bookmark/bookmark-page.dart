@@ -29,15 +29,23 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
   int get cardPosition => widget.cardPosition;
 
   PageController controller;
-  var currentPageValue = 0.0;
+  var currentPageValue ;
   double _currentIndex = 0;
+
+  double _lowerValue = 0;
 
   BookmarkBloc _bookmarkBloc;
 
   @override
   void initState() {
     super.initState();
+    currentPageValue = cardPosition.toDouble();
     controller = PageController( initialPage: cardPosition,keepPage: true, viewportFraction: 0.8);
+    controller.addListener(() {
+      setState(() {
+        currentPageValue = controller.page;
+      });
+    });
   }
 
 
@@ -105,9 +113,52 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: 50,),
-                    Text("Bookmarked Cards Appear Here",
-                      style: GoogleFonts.josefinSans(
-                        textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                    Visibility(
+                      visible: true,
+                      child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                        builder: (context, state) {
+                          if (state is Failure) {
+                            return Center(
+                              child: Text('failed to fetch'),
+                            );
+                          }
+                          if (state is Loaded) {
+                            if (state.bookmarkCards.isEmpty) {
+                              return Center(
+                                child: Text('no posts'),
+                              );
+                            }
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("Select Card (${(currentPageValue + 1).floor()}/${state.bookmarkCards.length})",
+                                  style: GoogleFonts.josefinSans(
+                                    textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 40, right: 40,),
+                                  child: Slider(
+                                    activeColor: Colors.indigoAccent,
+                                    min: 0,
+                                    max: state.bookmarkCards.length.toDouble() - 1,
+                                    onChanged: (currentValue) {
+                                      setState(() {
+
+                                        controller.animateToPage(currentValue.floor(), duration: Duration(milliseconds: 200), curve: Curves.linear);
+
+                                      });
+                                    },
+                                    value: currentPageValue,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: 30,),

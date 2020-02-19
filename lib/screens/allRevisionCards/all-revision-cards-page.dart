@@ -29,10 +29,12 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
   int get cardPosition => widget.cardPosition;
 
   PageController controller;
-  var currentPageValue = 0.0;
+  var currentPageValue;
   bool isAppBarUp;
 
   int revisionLength;
+  double _lowerValue = 0;
+
 
   AllRevisionCardsBloc _revisionCardsBloc;
 
@@ -40,8 +42,13 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
   void initState() {
     super.initState();
 
-    controller = PageController(initialPage: cardPosition, viewportFraction: .8, keepPage: true);
-
+    currentPageValue = cardPosition.toDouble();
+    controller = PageController( initialPage: cardPosition,keepPage: true, viewportFraction: 0.8);
+    controller.addListener(() {
+      setState(() {
+        currentPageValue = controller.page;
+      });
+    });
   }
 
 
@@ -82,7 +89,6 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
                           ),
                         ),
                       ),
-                      SizedBox(height: 50,),
                     ],
                   ),
                   Expanded(
@@ -117,6 +123,56 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: true,
+                    child: BlocBuilder<AllRevisionCardsBloc, AllRevisionCardsState>(
+                      builder: (context, state) {
+                        if (state is Failure) {
+                          return Center(
+                            child: Text('failed to fetch'),
+                          );
+                        }
+                        if (state is Loaded) {
+                          if (state.revisionCards.isEmpty) {
+                            return Center(
+                              child: Text('no posts'),
+                            );
+                          }
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Select Card (${(currentPageValue + 1).floor()}/${state.revisionCards.length})",
+                                style: GoogleFonts.josefinSans(
+                                  textStyle: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 40, right: 40,),
+                                child: Slider(
+                                  activeColor: Colors.indigoAccent,
+                                  min: 0,
+                                  max: state.revisionCards.length.toDouble() - 1,
+                                  onChanged: (currentValue) {
+                                    setState(() {
+
+                                      print(currentValue);
+                                      controller.animateToPage(currentValue.floor(), duration: Duration(milliseconds: 200), curve: Curves.linear);
+
+                                    });
+                                  },
+                                  value: currentPageValue,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10,),
                 ],
               ),
             ),

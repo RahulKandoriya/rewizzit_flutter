@@ -9,8 +9,9 @@ class NodeCardsScreen extends StatelessWidget {
   final Repository _repository = Repository();
   final String parentNodeId;
   final SharedPreferences prefs;
+  final bool isFromNodePage;
 
-  NodeCardsScreen({Key key, @required Repository repository, @required this.parentNodeId , @required this.prefs})
+  NodeCardsScreen({Key key, @required Repository repository, @required this.parentNodeId , @required this.prefs, @required this.isFromNodePage})
       : super(key: key);
 
   @override
@@ -18,7 +19,7 @@ class NodeCardsScreen extends StatelessWidget {
     return Scaffold(
       body: BlocProvider<NodeCardsBloc>(
         create: (context) => NodeCardsBloc(repository: _repository)..add(Fetch(parentNodeId: parentNodeId)),
-        child: NodeCardsPage(repository: _repository, parentNodeId: parentNodeId, prefs: prefs,),
+        child: NodeCardsPage(repository: _repository, parentNodeId: parentNodeId, prefs: prefs, isFromNodePage: isFromNodePage,),
       ),
     );
   }

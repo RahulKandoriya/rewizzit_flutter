@@ -54,8 +54,8 @@ class _DailyCardModelWidgetState extends State<DailyCardModelWidget> with Single
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text("The tiger (Panthera tigris) is the largest species among the Felidae and classified in the genus Panthera. It is most recognisable for its dark vertical stripes on orangish-brown fur with a lighter underside. It is an apex predator, primarily preying on ungulates such as deer and wild boar.",
-                  style: GoogleFonts.josefinSans(
-                    textStyle: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.w400),
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                   ),
                 ),
                 SizedBox(height: 20,),

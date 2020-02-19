@@ -185,12 +185,12 @@ class _EditCardPageState extends State<EditCardPage> with SingleTickerProviderSt
                                             minLines: 8,
                                             maxLines: 10,
                                             style: GoogleFonts.amaranth(
-                                              textStyle: TextStyle(fontSize: 20, color: Colors.black54, fontWeight: FontWeight.normal),
+                                              textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                                             ),
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: "Enter Details",
-                                              hintStyle: TextStyle(fontSize: 20.0, color: Colors.grey[300]),
+                                              hintStyle: TextStyle(fontSize: 18, color: Colors.grey[300]),
 
 
                                             ),

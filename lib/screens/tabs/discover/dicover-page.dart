@@ -350,6 +350,136 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
+                                SizedBox(height: 10,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(width: 20),
+                                    Text("Recent Card Nodes",
+                                      style: GoogleFonts.josefinSans(
+                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardNodesScreen(repository: _repository, prefs: prefs,)));
+                                      },
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Chip(
+                                            backgroundColor: Colors.grey[300],
+                                            label: Text("See all",
+                                              style: GoogleFonts.josefinSans(
+                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+
+                                  ],
+                                ),
+                                Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    child: state.cardNodes.isEmpty
+                                        ? Center(
+                                      child: Text(
+                                          "No Recent Card Nodes"
+                                      ),
+                                    )
+                                        : ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: <Widget>[
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: state.cardNodes.length,
+                                          itemBuilder: (context, position){
+                                            return Container(
+                                              margin: EdgeInsets.only(left: 20, bottom: 15),
+                                              child: GestureDetector(
+                                                onTap: (){
+                                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[position].sId, prefs: prefs, isFromNodePage: false,)));
+
+                                                },
+                                                behavior: HitTestBehavior.translucent,
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(top: 10),
+                                                  width: 247,
+                                                  decoration: new BoxDecoration(
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey[350],
+                                                        blurRadius: 8.0, // has the effect of softening the shadow
+                                                        spreadRadius: 3.0, // has the effect of extending the shadow
+                                                        offset: Offset(
+                                                          3.0, // horizontal, move right 10
+                                                          3.0, // vertical, move down 10
+                                                        ),
+                                                      )
+                                                    ],
+                                                    gradient: new LinearGradient(
+                                                        colors: [Colors.lightBlue, Colors.lightBlue[200]],
+                                                        begin: Alignment.topRight,
+                                                        end: Alignment.topLeft
+                                                    ),
+                                                    borderRadius: new BorderRadius.circular(10.0),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Center(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.only(left: 20),
+                                                              child : Text('${state.cardNodes[position].title}',
+                                                                style: GoogleFonts.josefinSans(
+                                                                  textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
+                                                                ),
+                                                              ),
+                                                            )
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 15,),
+                                                      Center(
+                                                        child: Icon(
+                                                          Icons.book,
+                                                          size: 50,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 30),
+                                                    ],
+
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+
+                                        ),
+                                        SizedBox(width: 20),
+                                      ],
+                                    )
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -407,7 +537,7 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                                             child: GestureDetector(
                                               onTap: (){
                                                 if(state.topNodes[position].isCardNode){
-                                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.topNodes[position].sId, prefs: prefs,)));
+                                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.topNodes[position].sId, prefs: prefs, isFromNodePage: false,)));
 
                                                 } else {
                                                   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodesScreen(repository: _repository, parentNodeId: "?id=" + state.topNodes[position].sId, prefs: prefs,)));
@@ -599,136 +729,6 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                                   )
                                 ),
                                 SizedBox(height: 20,),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(width: 20),
-                                    Text("Recent Card Nodes",
-                                      style: GoogleFonts.josefinSans(
-                                        textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    GestureDetector(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RecentCardNodesScreen(repository: _repository, prefs: prefs,)));
-                                      },
-                                      behavior: HitTestBehavior.translucent,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Chip(
-                                            backgroundColor: Colors.grey[300],
-                                            label: Text("See all",
-                                              style: GoogleFonts.josefinSans(
-                                                textStyle: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
-                                              ),
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-
-                                  ],
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  height: 150,
-                                  child: state.cardNodes.isEmpty
-                                  ? Center(
-                                    child: Text(
-                                      "No Recent Card Nodes"
-                                    ),
-                                  )
-                                  : ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: <Widget>[
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: state.cardNodes.length,
-                                        itemBuilder: (context, position){
-                                          return Container(
-                                            margin: EdgeInsets.only(left: 20, bottom: 15),
-                                            child: GestureDetector(
-                                              onTap: (){
-                                                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NodeCardsScreen(repository: _repository, parentNodeId: state.cardNodes[position].sId, prefs: prefs,)));
-
-                                              },
-                                              behavior: HitTestBehavior.translucent,
-                                              child: Container(
-                                                margin: const EdgeInsets.only(top: 10),
-                                                width: 247,
-                                                decoration: new BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey[350],
-                                                      blurRadius: 8.0, // has the effect of softening the shadow
-                                                      spreadRadius: 3.0, // has the effect of extending the shadow
-                                                      offset: Offset(
-                                                        3.0, // horizontal, move right 10
-                                                        3.0, // vertical, move down 10
-                                                      ),
-                                                    )
-                                                  ],
-                                                  gradient: new LinearGradient(
-                                                      colors: [Colors.lightBlue, Colors.lightBlue[200]],
-                                                      begin: Alignment.topRight,
-                                                      end: Alignment.topLeft
-                                                  ),
-                                                  borderRadius: new BorderRadius.circular(10.0),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: Center(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(left: 20),
-                                                            child : Text('${state.cardNodes[position].title}',
-                                                              style: GoogleFonts.josefinSans(
-                                                                textStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal),
-                                                              ),
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 15,),
-                                                    Center(
-                                                      child: Icon(
-                                                        Icons.book,
-                                                        size: 50,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 30),
-                                                  ],
-
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-
-                                      ),
-                                      SizedBox(width: 20),
-                                    ],
-                                  )
-                                ),
                               ],
                             ),
                           ),

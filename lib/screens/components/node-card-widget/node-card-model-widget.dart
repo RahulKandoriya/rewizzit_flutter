@@ -84,7 +84,7 @@ class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTi
                           SizedBox(height: 10,),
                           Text(widget.cardModel.content,
                             style: GoogleFonts.amaranth(
-                              textStyle: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.normal),
+                              textStyle: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
                             ),
                           ),
                           Row(
@@ -93,13 +93,12 @@ class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTi
                             children: <Widget>[
                               IconButton(
                                 icon: Icon(
-                                  Icons.delete,
+                                  Icons.edit,
                                   size: 25,
                                   color: Colors.grey,
                                 ),
                                 onPressed: () {
-
-                                  _showDialog();
+                                  _navigateAndEditCard(context);
                                 },
                               ),
                             ],
@@ -196,13 +195,13 @@ class _NodeCardModelWidgetState extends State<NodeCardModelWidget> with SingleTi
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.edit,
+                        Icons.delete,
                         size: 25,
                         color: Colors.grey,
                       ),
                       onPressed: () {
 
-                        _navigateAndEditCard(context);
+                        _showDialog();
 
                       },
                     ),
