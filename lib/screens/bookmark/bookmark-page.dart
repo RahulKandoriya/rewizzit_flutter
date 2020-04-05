@@ -98,6 +98,7 @@ class _BookmarkPageState extends State<BookmarkPage> with SingleTickerProviderSt
                         }
                         return PageView.builder(
                           itemCount: state.bookmarkCards.length,
+                          physics: AlwaysScrollableScrollPhysics(),
                           itemBuilder: (context, i) => CardModelWidget(cardModel: state.bookmarkCards[i], prefs: prefs, bookmarkBloc: _bookmarkBloc,),
                           controller: controller,
 

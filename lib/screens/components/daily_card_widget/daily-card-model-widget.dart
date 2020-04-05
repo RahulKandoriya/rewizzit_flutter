@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rewizzit/data/models/models/card-model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DailyCardModelWidget extends StatefulWidget {
   final CardModel cardModel;

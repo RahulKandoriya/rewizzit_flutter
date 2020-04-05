@@ -14,6 +14,7 @@ import 'package:rewizzit/screens/nodesPage/nodes-screen.dart';
 import 'package:rewizzit/screens/recentCards/recent-cards-screen.dart';
 import 'package:rewizzit/screens/recentCardNodes/recent-card-nodes-screen.dart';
 import 'package:rewizzit/screens/revisionCards/revision-cards-screen.dart';
+import 'package:rewizzit/screens/search_screen/search-screen.dart';
 import 'package:rewizzit/screens/tabs/discover/discover.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,6 +76,13 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                     )),
               ),
               Spacer(),
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SearchScreen()));
+                },
+              ),
               IconButton(
                 icon: Icon(Icons.add_circle),
                 onPressed: () {
@@ -562,7 +570,7 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
                                                   ],
                                                   gradient: state.topNodes[position].isCardNode
                                                       ? new LinearGradient(
-                                                      colors: [Colors.brown, Colors.brown[200]],
+                                                      colors: [Colors.lightBlue, Colors.lightBlue[200]],
                                                       begin: Alignment.topRight,
                                                       end: Alignment.topLeft
                                                   )

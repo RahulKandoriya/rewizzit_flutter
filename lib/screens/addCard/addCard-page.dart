@@ -288,7 +288,11 @@ class _AddCardPageState extends State<AddCardPage> with SingleTickerProviderStat
   _navigateAndSelectNode(BuildContext context) async {
 
     parentNodeTitle = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SelectNodeScreen(repository: _repository, prefs: prefs,)));
-    parentNodeTitle = parentNodeTitle == null ? "Add Node" : parentNodeTitle;
+
+    setState(() {
+      parentNodeTitle = parentNodeTitle == null ? "Add Node" : parentNodeTitle;
+
+    });
 
   }
 

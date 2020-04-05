@@ -200,12 +200,44 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                         ),
                       ),
                     ),
+                    SizedBox(height: 10,),
+                    Container(
+                      margin: EdgeInsets.only(left: 20, right: 20),
+                      child: RaisedButton(
+                        color: Colors.purple,
+                        onPressed: () {
+
+
+                        },
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.share,
+                                size: 25,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text("Share this App",
+                                  style: GoogleFonts.josefinSans(
+                                    textStyle: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 150,),
 
                   ],
                 )
-              /// Set childCount to limit no.of items
-              /// childCount: 100,
             );
           },
         ),

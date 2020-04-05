@@ -27,7 +27,7 @@ class ApiBaseHelper {
     try {
       final response = await http.get(_baseUrl + url, headers: await fetchAuthToken());
 
-      responseJson = _returnResponse(response);
+      responseJson = _returnResponse(response, url);
     } on SocketException {
       print('No net');
       throw FetchDataException('No Internet connection');
@@ -42,7 +42,7 @@ class ApiBaseHelper {
     try {
 
       final response = await http.post(_baseUrl + url ,headers: await fetchAuthToken(), body: json.encode(body));
-      responseJson = _returnResponse(response);
+      responseJson = _returnPostResponse(response, url, body);
 
 
     } on SocketException {
@@ -121,7 +121,27 @@ class ApiBaseHelper {
 
 }
 
-dynamic _returnResponse(http.Response response) {
+dynamic _returnResponse(http.Response response, String url) {
+  switch (response.statusCode) {
+
+    case 200:
+      var responseJson = json.decode(response.body.toString());
+      print(response.toString());
+      print(responseJson);
+      return responseJson;
+    case 400:
+      throw BadRequestException(response.body.toString());
+    case 401:
+    case 403:
+      throw UnauthorisedException(response.body.toString());
+    case 500:
+    default:
+      throw FetchDataException(
+          'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
+  }
+}
+
+dynamic _returnPostResponse(http.Response response, String url, dynamic body) {
   switch (response.statusCode) {
 
     case 200:

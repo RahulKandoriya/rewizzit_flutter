@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:rewizzit/data/services/repository.dart';
@@ -226,19 +225,16 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniCardsPerDay.toDouble()],
+                                        child: Slider(
                                           max: 20,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: ( lowerValue) {
                                             setState(() {
                                               isCardsPerDayChanged = true;
                                               cardsPerDay = lowerValue.toInt();
                                             });
                                           },
+                                          value: isCardsPerDayChanged ? cardsPerDay.toDouble() : iniCardsPerDay.toDouble(),
                                         ),
                                       )
                                     ],
@@ -275,21 +271,14 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniTimesPerDay.toDouble()],
+                                        child: Slider(
+                                          value: isTimesPerCardChanged ? timesPerDay.toDouble() : iniTimesPerDay.toDouble(),
                                           max: 10,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: (lowerValue) {
                                             setState(() {
-
-                                              setState(() {
-                                                isTimesPerCardChanged = true;
-                                                timesPerDay = lowerValue.toInt();
-                                              });
-
+                                              isTimesPerCardChanged = true;
+                                              timesPerDay = lowerValue.toInt();
                                             });
                                           },
                                         ),
@@ -328,14 +317,11 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniDays.toDouble()],
+                                        child: Slider(
+                                          value: isDaysChanged ? days.toDouble() : iniDays.toDouble(),
                                           max: 10,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: ( lowerValue) {
                                             setState(() {
 
                                               isDaysChanged = true;
@@ -405,14 +391,11 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniCardsPerDay.toDouble()],
+                                        child: Slider(
+                                          value: cardsPerDay.toDouble(),
                                           max: 20,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: (lowerValue) {
                                             setState(() {
                                               isCardsPerDayChanged = true;
                                               cardsPerDay = lowerValue.toInt();
@@ -454,14 +437,11 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniTimesPerDay.toDouble()],
+                                        child: Slider(
+                                          value: timesPerDay.toDouble(),
                                           max: 10,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: (lowerValue) {
                                             setState(() {
 
                                               setState(() {
@@ -507,14 +487,11 @@ class _RevisionPageState extends State<RevisionPage> with SingleTickerProviderSt
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(left: 40, right: 40,),
-                                        child: FlutterSlider(
-                                          tooltip: FlutterSliderTooltip(
-                                            disabled: true,
-                                          ),
-                                          values: [iniDays.toDouble()],
+                                        child: Slider(
+                                          value: days.toDouble(),
                                           max: 10,
                                           min: 0,
-                                          onDragging: (handlerIndex, lowerValue, upperValue) {
+                                          onChanged: ( lowerValue) {
                                             setState(() {
 
                                               isDaysChanged = true;
