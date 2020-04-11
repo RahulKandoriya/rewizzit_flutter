@@ -18,6 +18,7 @@ import 'package:rewizzit/screens/search_screen/search-screen.dart';
 import 'package:rewizzit/screens/tabs/discover/discover.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class DiscoverPage extends StatefulWidget {
 
   final Repository _repository;
@@ -47,8 +48,6 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
   void initState() {
     super.initState();
     controller = TabController(length: 3, vsync: this);
-
-
   }
 
 

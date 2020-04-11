@@ -41,7 +41,7 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
   void initState() {
     super.initState();
 
-    controller = PageController(initialPage: cardPosition, viewportFraction: .8, keepPage: true);
+    controller = PageController(initialPage: cardPosition, keepPage: true);
 
   }
 
@@ -87,7 +87,7 @@ class _RevisionCardsPageState extends State<RevisionCardsPage> with SingleTicker
                   ),
                   Expanded(
                     child: Container(
-                      width: double.infinity,
+                      width: 320,
                       child: BlocBuilder<RevisionCardsBloc, RevisionCardsState>(
                         builder: (context, state) {
                           if (state is Failure) {

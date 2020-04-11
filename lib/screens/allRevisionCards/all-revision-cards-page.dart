@@ -7,6 +7,7 @@ import 'package:rewizzit/screens/allRevisionCards/bloc/bloc.dart';
 import 'package:rewizzit/screens/allRevisionCards/bloc/all-revision-cards-bloc.dart';
 import 'package:rewizzit/screens/allRevisionCards/bloc/all-revision-cards-state.dart';
 import 'package:rewizzit/screens/components/all_revision_card_model_widget/all-revision-card-model-widget.dart';
+import 'package:rewizzit/screens/revisionCards/revision-cards-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AllRevisionCardsPage extends StatefulWidget {
@@ -27,6 +28,8 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
 
   SharedPreferences get prefs => widget.prefs;
   int get cardPosition => widget.cardPosition;
+
+  Repository get _repository => widget.repository;
 
   PageController controller;
   var currentPageValue;
@@ -188,6 +191,22 @@ class _AllRevisionCardsPageState extends State<AllRevisionCardsPage> with Single
                 ),
               )
           ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+                padding: EdgeInsets.only(right: 20, top: 30),
+                child: IconButton(
+                  onPressed: (){
+
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RevisionCardsScreen(repository: _repository, cardPosition: 0, prefs: prefs,)));
+                  },
+                  icon: Icon(
+                    Icons.filter_none,
+                    color: Colors.black,
+                  ),
+                )
+            ),
+          )
         ],
       ),
     );
